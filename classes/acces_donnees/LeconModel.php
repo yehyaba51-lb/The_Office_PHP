@@ -39,7 +39,19 @@
         }
 
         public function getLeconsByCours($cours_id){
-            $stmt = mysqli_prepare($this->conn, "SELECT * FROM lecon WHERE cours_id = ?");
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT   
+                    l.lecon_id AS id,
+                    l.cours_id,
+                    l.lecon_titre,
+                    l.lecon_ordre,
+                    (SELECT COUNT(*) FROM exercice AS e WHERE e.lecon_id = l.lecon_id AND e.cours_id = l.cours_id) AS exercices,
+                    EXISTS(SELECT 1 FROM lecon_video AS lv WHERE lv.lecon_id = l.lecon_id AND lv.cours_id = l.cours_id) AS has_video,
+                    EXISTS(SELECT 1 FROM lecon_pdf AS lp WHERE lp.lecon_id = l.lecon_id AND lp.cours_id = l.cours_id) AS has_pdf,
+                    EXISTS(SELECT 1 FROM lecon_texte AS lt WHERE lt.lecon_id = l.lecon_id AND lt.cours_id = l.cours_id) AS has_texte
+                FROM lecon AS l
+
+                WHERE l.cours_id = ?");
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
