@@ -116,18 +116,18 @@ class CoursManager
     public function getLeconsByCours($cours_id)
     {
         $rows = $this->leconModel->getLeconsByCours($cours_id);
-        $allLecons = [];
+        $result = [];
 
         foreach ($rows as $row) {
-            $lecon = new Lecon();
-            $lecon->setLeconId($row['lecon_id']);
-            $lecon->setCoursId($row['cours_id']);
-            $lecon->setTitre($row['lecon_titre']);
-            $lecon->setOrdre($row['ordre']);
+            $types = [];
+            if($row['has_video']) $types[] = 'Vidéo';
+            if($row['has_pdf']) $types[] = 'PDF';
+            if($row['has_texte']) $types[] = 'Texte';
 
-            $allLecons[] = $lecon;
+            $row['types'] = $types;
+            $result[] = $row;
         }
-        return $allLecons;
+        return $result;
     }
 
 
@@ -281,6 +281,16 @@ class CoursManager
         return $rows;
     }
 
+    public function getInscriptionByCours($id){
+        $rows = $this->inscriptionModel->getInscriptionByCours($id);
+
+        if(!$rows){
+            return false;
+        }
+
+        return $rows;
+    }
+
     public function createInscription($etudiant_id, $cours_id)
     {
         $data = [
@@ -317,6 +327,14 @@ class CoursManager
         return $rows;
     }
 
+    public function updateCoursByAdmin($id, $data){
+        return $this->coursModel->updateCoursByAdmin($id, $data);
+    }
+
+    public function supprimerCours($id){
+        return $this->coursModel->supprimerCours($id);
+    }
+    
 
     public function updateCategorie($id, $categorie_nom) {
         $data = [
