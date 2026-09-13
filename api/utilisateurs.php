@@ -16,28 +16,41 @@
         http_response_code(200);
         exit;
     } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
-        $allUtilisateurs = $manager->getAllUtilisateurs();
+        if(isset($_GET['formateur'])){
+            $allFormateur = $manager->getFormateurs();
 
-        if(!$allUtilisateurs){
-            http_response_code(500);
-            echo json_encode(['error' => 'Impossible de récupérer les utilisateurs']);
-            exit;
+            if(!$allFormateur){
+                http_response_code(500);
+                echo json_encode(['error' => 'Impossible de récupérer les formateur']);
+                exit;
+            }
+
+            http_response_code(200);
+            echo json_encode($allFormateur);
+        } else {
+            $allUtilisateurs = $manager->getAllUtilisateurs();
+    
+            if(!$allUtilisateurs){
+                http_response_code(500);
+                echo json_encode(['error' => 'Impossible de récupérer les utilisateurs']);
+                exit;
+            }
+    
+            $data = [];
+    
+            foreach ($allUtilisateurs as $utilisateur) {
+                $data[] = [
+                    'id' => $utilisateur->getUtilisateurId(),
+                    'prenom' => $utilisateur->getPrenom(),
+                    'nom' => $utilisateur->getNom(),
+                    'email' => $utilisateur->getEmail(),
+                    'role' => $utilisateur->getRole(),
+                    'cree_le' => $utilisateur->getCreeLe(),
+                ];
+            }
+            http_response_code(200);
+            echo json_encode($data);
         }
-
-        $data = [];
-
-        foreach ($allUtilisateurs as $utilisateur) {
-            $data[] = [
-                'id' => $utilisateur->getUtilisateurId(),
-                'prenom' => $utilisateur->getPrenom(),
-                'nom' => $utilisateur->getNom(),
-                'email' => $utilisateur->getEmail(),
-                'role' => $utilisateur->getRole(),
-                'cree_le' => $utilisateur->getCreeLe(),
-            ];
-        }
-        http_response_code(200);
-        echo json_encode($data);
     } else if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents('php://input'), true);
         
