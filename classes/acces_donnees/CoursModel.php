@@ -13,7 +13,18 @@ class CoursModel
     // cours table
     public function getCours($id)
     {
-        $stmt = mysqli_prepare($this->conn, "SELECT * FROM cours WHERE cours_id = ?");
+        $stmt = mysqli_prepare($this->conn, 
+            "SELECT
+                c.cours_id,
+                c.cours_titre,
+                c.description,
+                CONCAT(u.prenom, ' ', u.nom) AS formateur
+                (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
+                (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id ) AS lecons
+            FROM cours AS c
+            INNER JOIN utilisateur AS u
+            ON c.formateur_id = u.utilisateur_id
+            WHERE c.cours_id = ?");
 
         if (!$stmt) {
             error_log('Prepare failed: ' . mysqli_error($this->conn));
@@ -37,10 +48,13 @@ class CoursModel
     {
         $query = "SELECT
                     co.cours_id AS id,
+                    co.cours_titre,
                     co.cours_titre AS titre,
                     co.description,
                     ca.categorie_nom AS categorie,
                     CONCAT(u.prenom, ' ', u.nom) AS formateur,
+                    co.formateur_id,
+                    co.categorie_id,
                     (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = co.cours_id) AS lecons
                 FROM cours AS co
                 LEFT JOIN categorie AS ca
@@ -138,7 +152,7 @@ class CoursModel
 
     public function creerCours($data)
     {
-        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match('/^[A-Z][a-zA-Z ]*$/', $data['cours_titre'])){
+        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match('/^[A-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
             return false;
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
@@ -161,16 +175,26 @@ class CoursModel
         return mysqli_insert_id($this->conn);
     }
 
-    public function updateCours($id, $data)
+    public function updateCoursByAdmin($id, $data)
     {
-        $stmt = mysqli_prepare($this->conn, "UPDATE cours SET cours_titre = ?, description = ?, formateur_id = ?, categorie_id = ? WHERE cours_id = ?");
+        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 5 || !preg_match('/^[A-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
+            return false;
+        }
+        if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
+            return false;
+        }
+        if(empty($data['categorie_id']) || $data['categorie_id'] === ""){
+            return false;
+        }
+
+        $stmt = mysqli_prepare($this->conn, "UPDATE cours SET cours_titre = ?, formateur_id = ?, categorie_id = ? WHERE cours_id = ?");
 
         if (!$stmt) {
             error_log('Prepare failed: ' . mysqli_error($this->conn));
             return false;
         }
 
-        mysqli_stmt_bind_param($stmt, "ssiii", $data['cours_titre'], $data['description'], $data['formateur_id'], $data['categorie_id'], $id);
+        mysqli_stmt_bind_param($stmt, "siii", $data['cours_titre'], $data['formateur_id'], $data['categorie_id'], $id);
         return mysqli_stmt_execute($stmt);
     }
 
