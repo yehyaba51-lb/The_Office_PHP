@@ -16,16 +16,29 @@
         http_response_code(200);
         exit;
     } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
-        $allInscriptions = $manager->getAllInscriptions();
+         if(isset($_GET[''])){
+            $inscriptionPerCours = $manager->getInscriptionByCours($_GET['id']);
 
-        if(!$allInscriptions){
-            http_response_code(500);
-            echo json_encode(['error' => 'Impossible de récupérer les inscriptions']);
-            exit;
+            if(!$inscriptionPerCours){
+                http_response_code(500);
+                echo json_encode(['error' => 'Impossible de récupérer les cours']);
+                exit;
+            }
+
+            http_response_code(200);
+            echo json_encode($inscriptionPerCours);
+        } else {
+            $allInscriptions = $manager->getAllInscriptions();
+    
+            if(!$allInscriptions){
+                http_response_code(500);
+                echo json_encode(['error' => 'Impossible de récupérer les inscriptions']);
+                exit;
+            }
+    
+            http_response_code(200);
+            echo json_encode($allInscriptions);
         }
-
-        http_response_code(200);
-        echo json_encode($allInscriptions);
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $data = json_decode(file_get_contents("php://input"), true);
 
