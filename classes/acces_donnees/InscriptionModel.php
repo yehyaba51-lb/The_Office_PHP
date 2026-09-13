@@ -25,6 +25,36 @@
             return mysqli_fetch_assoc($result);
         }
 
+        public function getInscriptionByCours($id){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT 
+                    i.inscription_id,
+                    CONCAT(u.prenom, ' ', u.nom) AS etudiant,
+                    i.inscrit_le,
+                    p.cours_id,
+                    p.derniere_lecon_id AS current,
+                    (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = p.cours_id ) AS total
+                FROM inscription AS i
+                INNER JOIN progression AS p
+                i.etudiant_id = p.etudiant_id
+                AND i.cours_id = p.cours_id
+                INNER JOIN utilisateur AS u
+                ON i.etudiant_id = u.utilisateur_id
+                WHERE i.cours_id = ?");
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+
+            $result = mysqli_stmt_get_result($stmt);
+
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
         public function getAllInscriptions(){
             $query = "SELECT 
                         i.inscription_id AS id,
