@@ -49,6 +49,10 @@
             return $utilisateurs;
         }
 
+        public function getFormateurs(){
+            return $this->model->getFormateurs();
+        }
+
         public function creerUtilisateur($data){
             return $this->model->creerUtilisateur($data);
         }
