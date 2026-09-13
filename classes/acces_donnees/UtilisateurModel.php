@@ -57,6 +57,22 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+        public function getFormateurs(){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT utilisateur_id AS id, prenom, nom FROM utilisateur WHERE role = 'Formateur'"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
         public function genererMotDePasse($longueur = 12){
             $caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
             $mot_de_passe = '';
