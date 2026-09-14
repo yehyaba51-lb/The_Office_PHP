@@ -54,14 +54,14 @@ composer install
 Also not included (holds real credentials). Copy `.env.example` to `.env` in the `backend/` folder, then fill in:
 ```
 DB_HOST=localhost
-DB_NAME=e_learning
+DB_NAME=the_office_database
 DB_USER=root
 DB_PASS=
 ```
 
 ### 7. Create the database
 1. Open `http://localhost/phpmyadmin`
-2. Create a new database named `e_learning`
+2. Create a new database named `the_office_database`
 3. Run the table-creation SQL script (in this repo) against it
 4. Run the seed data script if you want sample data to test with
 
