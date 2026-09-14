@@ -16,10 +16,10 @@
         http_response_code(200);
         exit;
     } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
-         if(isset($_GET[''])){
+         if(isset($_GET['id'])){
             $inscriptionPerCours = $manager->getInscriptionByCours($_GET['id']);
 
-            if(!$inscriptionPerCours){
+            if($inscriptionPerCours === false){
                 http_response_code(500);
                 echo json_encode(['error' => 'Impossible de récupérer les cours']);
                 exit;
