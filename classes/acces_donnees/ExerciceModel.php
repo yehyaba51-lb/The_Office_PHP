@@ -59,6 +59,10 @@
         }
 
         public function creerExercice($data){
+            if(empty($data['exercice_titre']) || strlen(trim($data['exercice_titre'])) < 2 ){
+                return false;
+            }
+
             $stmt = mysqli_prepare($this->conn, "INSERT INTO exercice(cours_id, lecon_id, exercice_titre) VALUES(?, ?, ?)");
 
             if (!$stmt) {
@@ -66,7 +70,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], $data['exercice_titre']);
+            mysqli_stmt_bind_param($stmt, "iis", $data['coursId'], $data['leconId'], $data['exercice_titre']);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);

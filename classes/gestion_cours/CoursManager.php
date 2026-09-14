@@ -68,16 +68,7 @@ class CoursManager
             return false;
         }
 
-        $cours = new Cours();
-        $cours->setCoursId($row['cours_id']);
-        $cours->setTitre($row['cours_titre']);
-        $cours->setDescription($row['description']);
-        $cours->setFormateurId($row['formateur_id']);
-        $cours->setCategorieId($row['categorie_id']);
-        $cours->setCreeLe($row['cree_le']);
-        $cours->setUrlImage($row['url_image']);
-
-        return $cours;
+        return $row;
     }
 
 
@@ -284,7 +275,7 @@ class CoursManager
     public function getInscriptionByCours($id){
         $rows = $this->inscriptionModel->getInscriptionByCours($id);
 
-        if(!$rows){
+        if($rows === false){
             return false;
         }
 
