@@ -59,7 +59,7 @@
         }
 
         public function creerExercice($data){
-            if(empty($data['exercice_titre']) || strlen(trim($data['exercice_titre'])) < 2 ){
+            if(empty($data['exercice_titre']) || strlen(trim($data['exercice_titre'])) < 2 || !preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/u', $data['exercice_titre'])){
                 return false;
             }
 
@@ -70,9 +70,12 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], $data['exercice_titre']);
-            mysqli_stmt_execute($stmt);
-
+            mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], strtolower($data['exercice_titre']));
+            $success = mysqli_stmt_execute($stmt);
+            if(!$success){
+                echo json_encode(['error' => mysqli_stmt_error($stmt)]);
+                exit;
+            }
             return mysqli_insert_id($this->conn);
         }
 
