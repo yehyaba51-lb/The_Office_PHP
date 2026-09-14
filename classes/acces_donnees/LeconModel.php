@@ -94,7 +94,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "isi", $data['cours_id'], $data['lecon_titre'], $data['lecon_ordre']);
+            mysqli_stmt_bind_param($stmt, "isi", $data['cours_id'], strtolower($data['lecon_titre']), $data['lecon_ordre']);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
@@ -108,7 +108,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "sii", $data['lecon_titre'], $data['lecon_ordre'], $id);
+            mysqli_stmt_bind_param($stmt, "sii", strtolower($data['lecon_titre']), $data['lecon_ordre'], $id);
             return mysqli_stmt_execute($stmt);
         }
 
