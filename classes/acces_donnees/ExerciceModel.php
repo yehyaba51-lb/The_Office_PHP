@@ -70,7 +70,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iis", $data['coursId'], $data['leconId'], $data['exercice_titre']);
+            mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], $data['exercice_titre']);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
