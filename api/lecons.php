@@ -20,7 +20,7 @@
         if(isset($_GET['id'])){
             $allLeconsByCours = $manager->getLeconsByCours($_GET['id']);
 
-            if(!$allLeconsByCours){
+            if($allLeconsByCours === false){
                 http_response_code(500);
                 echo json_encode(['error' => 'Id manquante']);
                 exit;
@@ -29,4 +29,7 @@
             http_response_code(200);
             echo json_encode($allLeconsByCours);
         }
-    } 
+    } else {
+        http_response_code(405);
+        echo json_encode(['error' => 'Méthode non autorisée']);
+    }
