@@ -20,7 +20,7 @@
         $data = json_decode(file_get_contents("php://input"), true);
 
         $result = $manager->creerPlaceholder($data['leconId'], $data['coursId'], $data['exercice_titre']);
-        echo $result;
+
         if(!$result){
             http_response_code(400);
             echo json_encode(['error' => 'Exercice ajouté invalide']);
