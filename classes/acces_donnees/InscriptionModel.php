@@ -28,15 +28,16 @@
         public function getInscriptionByCours($id){
             $stmt = mysqli_prepare($this->conn, 
                 "SELECT 
-                    i.inscription_id,
+                    i.inscription_id AS id,
                     CONCAT(u.prenom, ' ', u.nom) AS etudiant,
                     i.inscrit_le,
                     p.cours_id,
                     p.derniere_lecon_id AS current,
+                    i.note_finale,
                     (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = p.cours_id ) AS total
                 FROM inscription AS i
                 INNER JOIN progression AS p
-                i.etudiant_id = p.etudiant_id
+                ON i.etudiant_id = p.etudiant_id
                 AND i.cours_id = p.cours_id
                 INNER JOIN utilisateur AS u
                 ON i.etudiant_id = u.utilisateur_id
