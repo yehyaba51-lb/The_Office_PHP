@@ -54,7 +54,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "s", $data['categorie_nom']);
+            mysqli_stmt_bind_param($stmt, "s", strtolower($data['categorie_nom']));
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
@@ -72,7 +72,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "si", $data['categorie_nom'], $id);
+            mysqli_stmt_bind_param($stmt, "si", strtolower($data['categorie_nom']), $id);
             return mysqli_stmt_execute($stmt);
         }
 
