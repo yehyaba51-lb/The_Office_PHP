@@ -17,8 +17,17 @@
         http_response_code(200);
         exit;
     } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
-        if(isset($_GET[''])){
-            
+        if(isset($_GET['id'])){
+            $coursById = $manager->getCours($_GET['id']);
+
+            if(!$coursById){
+                http_response_code(400);
+                echo json_encode(['error' => 'Id manquante']);
+                exit;
+            }
+
+            http_response_code(200);
+            echo json_encode($coursById);
         } else {
             $allCours = $manager->getAllCours();
             if(!$allCours){
