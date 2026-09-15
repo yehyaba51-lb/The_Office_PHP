@@ -30,7 +30,7 @@
                 "SELECT 
                     i.inscription_id AS id,
                     CONCAT(u.prenom, ' ', u.nom) AS etudiant,
-                    i.inscrit_le,
+                    DATE(i.inscrit_le) AS inscrit_le,
                     p.cours_id,
                     p.derniere_lecon_id AS current,
                     i.note_finale,
