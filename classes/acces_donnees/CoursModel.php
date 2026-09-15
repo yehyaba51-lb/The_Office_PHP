@@ -169,7 +169,8 @@ class CoursModel
             return false;
         }
 
-        mysqli_stmt_bind_param($stmt, "sii", strtolower($data['cours_titre']), $data['formateur_id'], $data['categorie_id']);
+        $cours_titre = strtolower($data['cours_titre']);
+        mysqli_stmt_bind_param($stmt, "sii", $cours_titre, $data['formateur_id'], $data['categorie_id']);
         mysqli_stmt_execute($stmt);
 
         return mysqli_insert_id($this->conn);
@@ -194,7 +195,8 @@ class CoursModel
             return false;
         }
 
-        mysqli_stmt_bind_param($stmt, "siii", strtolower($data['cours_titre']), $data['formateur_id'], $data['categorie_id'], $id);
+        $cours_titre = strtolower($data['cours_titre']);
+        mysqli_stmt_bind_param($stmt, "siii", $cours_titre, $data['formateur_id'], $data['categorie_id'], $id);
         return mysqli_stmt_execute($stmt);
     }
 

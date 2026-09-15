@@ -72,7 +72,8 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "si", strtolower($data['categorie_nom']), $id);
+            $categorie_nom = strtolower($data['categorie_nom']);
+            mysqli_stmt_bind_param($stmt, "si", $categorie_nom, $id);
             return mysqli_stmt_execute($stmt);
         }
 

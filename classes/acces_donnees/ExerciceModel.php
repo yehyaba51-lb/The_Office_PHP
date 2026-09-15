@@ -70,7 +70,8 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], strtolower($data['exercice_titre']));
+            $exercice_titre = strtolower($data['exercice_titre']);
+            mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], $exercice_titre);
             $success = mysqli_stmt_execute($stmt);
             if(!$success){
                 echo json_encode(['error' => mysqli_stmt_error($stmt)]);

@@ -113,7 +113,10 @@
                 return false;
             }
             
-            mysqli_stmt_bind_param($stmt, 'sssss', strtolower($data['prenom']), strtolower($data['nom']), strtolower($data['email']), $mot_de_passe_hash, $data['role']);
+            $prenom = strtolower($data['prenom']);
+            $nom = strtolower($data['nom']);
+            $email = strtolower($data['email']);
+            mysqli_stmt_bind_param($stmt, 'sssss', $prenom, $nom, $email, $mot_de_passe_hash, $data['role']);
             mysqli_stmt_execute($stmt);
 
             return [
@@ -130,7 +133,10 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "sssi", strtolower($data['prenom']), strtolower($data['nom']), strtolower($data['email']), $id);
+            $prenom = strtolower($data['prenom']);
+            $nom = strtolower($data['nom']);
+            $email = strtolower($data['email']);
+            mysqli_stmt_bind_param($stmt, "sssi", $prenom, $nom, $email, $id);
             return mysqli_stmt_execute($stmt);
             
         }

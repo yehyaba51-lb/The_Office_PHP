@@ -94,7 +94,8 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "isi", $data['cours_id'], strtolower($data['lecon_titre']), $data['lecon_ordre']);
+            $lecon_titre = strtolower($data['lecon_titre']);
+            mysqli_stmt_bind_param($stmt, "isi", $data['cours_id'], $lecon_titre, $data['lecon_ordre']);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
@@ -107,8 +108,9 @@
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
-
-            mysqli_stmt_bind_param($stmt, "sii", strtolower($data['lecon_titre']), $data['lecon_ordre'], $id);
+            
+            $lecon_titre = strtolower($data['lecon_titre']);
+            mysqli_stmt_bind_param($stmt, "sii", $lecon_titre, $data['lecon_ordre'], $id);
             return mysqli_stmt_execute($stmt);
         }
 
