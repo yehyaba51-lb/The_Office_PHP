@@ -54,7 +54,13 @@
                 return false;
             }
 
-            return true;
+            $user = $this->model->getUtilisateur($_SESSION['utilisateur_id']);
+
+            if(!$user){
+                return false;
+            }
+
+            return $user;
         }
 
         public function verifierRole($role){
