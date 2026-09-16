@@ -53,8 +53,8 @@
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
-
-            mysqli_stmt_bind_param($stmt, "s", strtolower($data['categorie_nom']));
+            $categorie_nom = strtolower($data['categorie_nom']);
+            mysqli_stmt_bind_param($stmt, "s", $categorie_nom);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
