@@ -122,11 +122,11 @@
     
         public function creerUtilisateur($data)
         {
-            if(empty($data['prenom']) || strlen(trim($data['prenom'])) < 2 || !preg_match('/^[A-Z][a-zA-Z ]*$/', $data['prenom'])){
+            if(empty($data['prenom']) || strlen(trim($data['prenom'])) < 2 || !preg_match('/^[A-Za-z\'\-\s]+$/', $data['prenom'])){
                 return false;
             }
 
-            if(empty($data['nom']) || strlen(trim($data['nom'])) < 2 || !preg_match('/^[A-Z][a-zA-Z ]*$/', $data['nom'])){
+            if(empty($data['nom']) || strlen(trim($data['nom'])) < 2 || !preg_match('/^[a-zA-Z]+$/', $data['nom'])){
                 return false;
             }
 
@@ -162,6 +162,21 @@
         }
 
         public function updateUtilisateur($id, $data){
+            if(empty($data['prenom']) || strlen(trim($data['prenom'])) < 2 || !preg_match('/^[A-Za-z\'\-\s]+$/', $data['prenom'])){
+                return false;
+            }
+
+            if(empty($data['nom']) || strlen(trim($data['nom'])) < 2 || !preg_match('/^[a-zA-Z]+$/', $data['nom'])){
+                return false;
+            }
+
+            if(empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
+                return false;
+            };
+
+            if(empty($data['role']) || $data['role'] === ""){
+                return false;
+            }
             $stmt = mysqli_prepare($this->conn, "UPDATE utilisateur SET prenom = ?, nom = ?, email = ? WHERE utilisateur_id  = ?");
 
             if (!$stmt) {
