@@ -57,6 +57,8 @@ DB_HOST=localhost
 DB_NAME=the_office_database
 DB_USER=root
 DB_PASS=
+
+FRONTEND_URL=http://localhost:3000
 ```
 
 ### 7. Create the database
