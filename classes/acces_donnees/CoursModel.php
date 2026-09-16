@@ -152,7 +152,7 @@ class CoursModel
 
     public function creerCours($data)
     {
-        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match('/^[A-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\' :\-]*$', $data['cours_titre'])){
+        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match('/^[a-zà-ÿ][a-zà-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
             return false;
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
@@ -178,7 +178,7 @@ class CoursModel
 
     public function updateCoursByAdmin($id, $data)
     {
-        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 5 || !preg_match('/^[A-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
+        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 5 || !preg_match('/^[a-zA-ZÀ-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
             return false;
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
