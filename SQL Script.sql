@@ -13,7 +13,7 @@ CREATE TABLE utilisateur(
 
 CREATE TABLE categorie(
     categorie_id INT PRIMARY KEY AUTO_INCREMENT,
-    categorie_nom VARCHAR(100)
+    categorie_nom VARCHAR(100) UNIQUE
 );
 
 CREATE TABLE cours(
