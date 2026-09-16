@@ -7,7 +7,8 @@ CREATE TABLE utilisateur(
     email VARCHAR(100) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(100) NOT NULL,
     role ENUM('Administrateur', 'Etudiant', 'Formateur'),
-    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    premiere_connexion BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE categorie(
