@@ -83,6 +83,42 @@
 
             return $mot_de_passe;
         }
+
+        public function changerPremiereConnexion($id){
+            $stmt = mysqli_prepare($this->conn,
+                "UPDATE utilisateur
+                SET premiere_connexion = FALSE
+                WHERE utilisateur_id = ?"
+            );
+            
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            return mysqli_stmt_execute($stmt);
+        }
+
+        public function changerPassword($id, $data){
+            if(empty($data['password']) || !preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $data['password'])){
+                return false;
+            }
+            $stmt = mysqli_prepare($this->conn, 
+                "UPDATE utilisateur
+                SET mot_de_passe = ?, premiere_connexion = FALSE
+                WHERE utilisateur_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            $mot_de_passe_hash = password_hash($data['password'], PASSWORD_DEFAULT);
+            mysqli_stmt_bind_param($stmt, "si", $mot_de_passe_hash, $id);
+            return mysqli_stmt_execute($stmt);
+        }
     
         public function creerUtilisateur($data)
         {
