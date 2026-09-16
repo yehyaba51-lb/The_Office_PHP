@@ -24,6 +24,17 @@
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit;
+    } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+        $row = $manager->verifierSession();
+
+        if(!$row){
+            http_response_code(401);
+            echo json_encode(['error' => 'Pas de session']);
+            exit;
+        }
+
+        http_response_code(200);
+        echo json_encode($row);
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $data = json_decode(file_get_contents("php://input"), true);
 
