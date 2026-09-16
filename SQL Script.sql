@@ -1,4 +1,4 @@
-USE e_learning;
+USE the_office_database;
 
 CREATE TABLE utilisateur(
     utilisateur_id INT PRIMARY KEY AUTO_INCREMENT,
