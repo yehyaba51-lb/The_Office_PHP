@@ -59,6 +59,38 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+        public function compterSoumissionsNonCorrigees($formateur_id){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT 
+                    COUNT(*) AS total,
+                    SUM(MONTH(s.soumis_le) = MONTH(CURRENT_DATE()) 
+                        AND YEAR(s.soumis_le) = YEAR(CURRENT_DATE())) AS ce_mois
+                FROM soumission AS s
+                INNER JOIN question AS q
+                ON s.question_id = q.question_id
+                INNER JOIN exercice AS e
+                ON q.exercice_id = e.exercice_id
+                INNER JOIN cours AS c
+                ON e.cours_id = c.cours_id
+                WHERE c.formateur_id = ? AND s.corrige_le IS NULL"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $formateur_id);
+            $execute = mysqli_stmt_execute($stmt);
+                
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_assoc($result);
+        }
+
 
         public function getSoumissionByEtudiantQuestion($etudiant_id, $question_id){
             $stmt = mysqli_prepare($this->conn, 
@@ -92,6 +124,41 @@
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
+        }
+
+        public function getSoumissionFormateur($formateur_id){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT 
+                    e.exercice_titre,
+                    s.soumis_le,
+                    CONCAT(u.prenom, ' ',  u.nom) AS etudiant,
+                    s.soumission_id
+                FROM soumission AS s
+                INNER JOIN question AS q
+                ON s.question_id = q.question_id
+                INNER JOIN exercice AS e
+                ON q.exercice_id = e.exercice_id
+                INNER JOIN cours AS c
+                ON e.cours_id = c.cours_id
+                INNER JOIN utilisateur AS u
+                ON s.etudiant_id = u.utilisateur_id
+                WHERE c.formateur_id = ? AND s.corrige_le IS NULL"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $formateur_id);
+            $execute = mysqli_stmt_execute($stmt);
+                
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
         public function corrigerSoumission($id, $data){
