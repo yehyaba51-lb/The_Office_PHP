@@ -7,6 +7,8 @@ require_once(__DIR__ . '/../acces_donnees/LeconPdfModel.php');
 require_once(__DIR__ . '/../acces_donnees/LeconVideoModel.php');
 require_once(__DIR__ . '/../acces_donnees/InscriptionModel.php');
 require_once(__DIR__ . '/../acces_donnees/CategorieModel.php');
+require_once(__DIR__ .'/../acces_donnees/SoumissionModel.php');
+require_once(__DIR__ . '/../acces_donnees/ProgressionModel.php');
 require_once('Cours.php');
 require_once('Lecon.php');
 require_once('LeconTexte.php');
@@ -25,6 +27,8 @@ class CoursManager
     private $leconVideoModel;
     private $inscriptionModel;
     private $categorieModel;
+    private $soumissionModel;
+    private $progressionModel;
 
     public function __construct()
     {
@@ -36,6 +40,8 @@ class CoursManager
         $this->leconVideoModel = new LeconVideoModel($db);
         $this->inscriptionModel = new InscriptionModel($db);
         $this->categorieModel = new CategorieModel($db);
+        $this->soumissionModel = new SoumissionModel($db);
+        $this->progressionModel = new ProgressionModel($db);
     }
 
     public function creerPlaceholder($cours_titre, $formateur_id, $categorie_id)
@@ -102,6 +108,16 @@ class CoursManager
             $allCours[] = $cours;
         }
         return $allCours;
+    }
+
+
+    public function getStatistiquesFormateur($formateur_id){
+        return [
+            'cours' => $this->coursModel->getNombreCours($formateur_id),
+            'etudiants' => $this->inscriptionModel->compterEtudiants($formateur_id),
+            'soumissions' => $this->soumissionModel->compterSoumissionsNonCorrigees($formateur_id),
+            'completion' => $this->progressionModel->calculerTauxCompletion($formateur_id)
+        ];
     }
 
     public function getLeconsByCours($cours_id)
@@ -275,6 +291,15 @@ class CoursManager
     public function getInscriptionByCours($id){
         $rows = $this->inscriptionModel->getInscriptionByCours($id);
 
+        if($rows === false){
+            return false;
+        }
+
+        return $rows;
+    }
+
+    public function getInscriptionByFormateur($formateur_id){
+        $rows = $this->inscriptionModel->getInscriptionByFormateur($formateur_id);
         if($rows === false){
             return false;
         }
