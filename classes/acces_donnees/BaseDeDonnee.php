@@ -15,6 +15,8 @@
                 error_log('Database connection failed: ' . mysqli_connect_error());
                 exit;
             }
+            
+            mysqli_set_charset($this->conn, 'utf8mb4');
         }
 
         public function getConn(){
