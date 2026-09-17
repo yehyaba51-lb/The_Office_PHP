@@ -56,6 +56,66 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+        public function getInscriptionByFormateur($formateur_id){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT 
+                    i.inscription_id,
+                    CONCAT(u.prenom, ' ', u.nom) AS etudiant,
+                    c.cours_titre,
+                    i.inscrit_le,
+                    i.note_finale
+                FROM inscription AS i
+                INNER JOIN cours AS c
+                ON i.cours_id = c.cours_id
+                INNER JOIN utilisateur AS u
+                ON i.etudiant_id = u.utilisateur_id
+                WHERE c.formateur_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $formateur_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
+        public function compterEtudiants($formateur_id){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT 
+                    COUNT(*) AS total,
+                    SUM(MONTH(i.inscrit_le) = MONTH(CURRENT_DATE()) 
+                        AND YEAR(i.inscrit_le) = YEAR(CURRENT_DATE())) AS ce_mois
+                FROM inscription AS i
+                INNER JOIN cours AS c
+                ON i.cours_id = c.cours_id
+                WHERE c.formateur_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $formateur_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_assoc($result);
+        }
+
         public function getAllInscriptions(){
             $query = "SELECT 
                         i.inscription_id AS id,
