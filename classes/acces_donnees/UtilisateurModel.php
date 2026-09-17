@@ -153,7 +153,11 @@
             $nom = strtolower($data['nom']);
             $email = strtolower($data['email']);
             mysqli_stmt_bind_param($stmt, 'sssss', $prenom, $nom, $email, $mot_de_passe_hash, $data['role']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+            
+            if(!$execute){
+                return false;
+            }
 
             return [
                 'id' => mysqli_insert_id($this->conn),
@@ -198,7 +202,7 @@
 
             $stmt = mysqli_prepare($this->conn, 
                 "UPDATE utilisateur
-                SET mot_de_passe = ?
+                SET mot_de_passe = ?, premiere_connexion = TRUE
                 WHERE utilisateur_id = ?"
             );
 
@@ -211,7 +215,7 @@
             mysqli_stmt_execute($stmt);
 
             return [
-                'id' => mysqli_insert_id($this->conn),
+                'id' => $id,
                 'mot_de_passe' => $mot_de_passe
             ];
         }
