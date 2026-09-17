@@ -72,6 +72,16 @@
             return $allExercices;
         }
 
+        public function getSoumissionFormateur($formateur_id){
+            $rows = $this->soumissionModel->getSoumissionFormateur($formateur_id);
+
+            if(!$rows){
+                return false;
+            }
+
+            return $rows;
+        }
+
         public function getQuestionsByExercice($exercice_id){
             $rows = $this->questionModel->getQuestionsByExercice($exercice_id);
             $allQuestions = [];
