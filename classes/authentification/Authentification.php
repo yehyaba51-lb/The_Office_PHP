@@ -25,6 +25,7 @@
                 session_start();
             }
 
+            session_regenerate_id(true);
             $_SESSION['utilisateur_id'] = $row['utilisateur_id'];
             $_SESSION['role'] = $row['role'];
             
