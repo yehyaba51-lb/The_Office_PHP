@@ -26,6 +26,39 @@
         }
 
 
+        public function calculerTauxCompletion($formateur_id){
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT
+                    (SELECT COUNT(*)
+                    FROM progression_lecon AS pl
+                    WHERE pl.etudiant_id = p.etudiant_id
+                    AND pl.cours_id = p.cours_id
+                    AND pl.statut = 'terminee') AS current,
+                    (SELECT COUNT(*)
+                    FROM lecon AS l
+                    WHERE l.cours_id = p.cours_id) AS total
+                FROM progression AS p
+                INNER JOIN cours AS c ON p.cours_id = c.cours_id
+                WHERE c.formateur_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $formateur_id);
+            $execute = mysqli_stmt_execute($stmt);
+                
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        }
+
         public function getProgressionPerEtudiant($etudiant_id, $cours_id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT *
