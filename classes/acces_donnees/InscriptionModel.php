@@ -87,8 +87,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ii", $data['etudiant_id'], $data['cours_id']);
-            mysqli_stmt_execute($stmt);
-
+            $execute = mysqli_stmt_execute($stmt);
+            
+            if(!$execute){
+                return false;
+            }
             return mysqli_insert_id($this->conn);
         }
 
