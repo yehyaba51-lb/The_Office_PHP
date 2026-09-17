@@ -4,12 +4,37 @@
     $dotenv->load();
 
     header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: Content-Type');
     header('Content-Type: application/json');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 
     require_once(__DIR__ . '/../classes/gestion_exercices/ExerciceManager.php');
 
     $manager = new ExerciceManager();
 
-    if($_SERVER['REQUEST_METHOD'] === 'GET'){
-        $allSoumissions = $manager->getAllSoumissions();
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit;
+    } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+        if(isset($_GET['id'])){
+            if(isset($_GET['formateur'])){
+                $soumissionByFormateur = $manager->getSoumissionFormateur($_GET['id']);
+
+                if(!$soumissionByFormateur){
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Id manquante']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($soumissionByFormateur);
+            } else {
+
+            }
+        } else {
+            $allSoumissions = $manager->getAllSoumissions();
+        }
+    } else {
+        http_response_code(405);
+        echo json_encode(['error' => 'Méthode non autorisée']);
     }
