@@ -119,6 +119,31 @@ class CoursModel
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
+    public function getNombreCours($formateur_id){
+        $stmt = mysqli_prepare($this->conn, 
+            "SELECT
+                COUNT(*) AS total,
+                SUM(MONTH(c.cree_le) = MONTH(CURRENT_DATE()) 
+                    AND YEAR(c.cree_le) = YEAR(CURRENT_DATE())) AS ce_mois
+            FROM cours AS c
+            WHERE formateur_id = ?"
+        );
+
+        if(!$stmt){
+            error_log('Prepare failed: ' . mysqli_error($this->conn));
+            return false;
+        }
+        mysqli_stmt_bind_param($stmt, "i", $formateur_id);
+        $execute = mysqli_stmt_execute($stmt);
+            
+        if(!$execute){
+            return false;
+        }
+
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($result);
+    }
+
     public function getEtudiantsByCours($cours_id)
     {
         $stmt = mysqli_prepare($this->conn,
