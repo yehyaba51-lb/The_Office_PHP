@@ -20,7 +20,7 @@
             if(isset($_GET['formateur'])){
                 $soumissionByFormateur = $manager->getSoumissionFormateur($_GET['id']);
 
-                if(!$soumissionByFormateur){
+                if($soumissionByFormateur === false){
                     http_response_code(400);
                     echo json_encode(['error' => 'Id manquante']);
                     exit;
