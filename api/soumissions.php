@@ -3,7 +3,8 @@
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
 
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: ' . $_ENV['FRONTEND_URL']);
+    header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Allow-Headers: Content-Type');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -22,7 +23,7 @@
 
                 if($soumissionByFormateur === false){
                     http_response_code(400);
-                    echo json_encode(['error' => 'Id manquante']);
+                    echo json_encode(['error' => 'Impossible de récupérer les soumissions']);
                     exit;
                 }
 
