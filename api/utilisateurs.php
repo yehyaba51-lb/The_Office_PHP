@@ -3,7 +3,8 @@
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
 
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: ' . $_ENV['FRONTEND_URL']);
+    header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Allow-Headers: Content-Type');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -19,7 +20,7 @@
         if(isset($_GET['formateur'])){
             $allFormateur = $manager->getFormateurs();
 
-            if(!$allFormateur){
+            if($allFormateur === false){
                 http_response_code(500);
                 echo json_encode(['error' => 'Impossible de récupérer les formateur']);
                 exit;
@@ -30,7 +31,7 @@
         } else {
             $allUtilisateurs = $manager->getAllUtilisateurs();
     
-            if(!$allUtilisateurs){
+            if($allUtilisateurs === false){
                 http_response_code(500);
                 echo json_encode(['error' => 'Impossible de récupérer les utilisateurs']);
                 exit;
@@ -58,7 +59,7 @@
 
         if(!$result){
             http_response_code(400);
-            echo json_encode(['error' => 'Utilisatuer ajouté invalide']);
+            echo json_encode(['error' => 'Utilisateur ajouté invalide']);
             exit;
         }
 
@@ -69,7 +70,7 @@
         if(!isset($_GET['id'])){
             http_response_code(400);
             echo json_encode(['error' => 'Id manquant']);
-            return false;
+            exit;
         } 
         if(isset($_GET['action']) && $_GET['action'] === 'reset'){
             $result = $manager->reinitialiserMotDePasse($_GET['id']);
@@ -89,7 +90,7 @@
 
             if(!$update){
                 http_response_code(400);
-                echo json_encode(['error' => 'Impossible de modifier la categorie']);
+                echo json_encode(['error' => "Impossible de modifier l'utilisateur"]);
                 exit;
             }
             
