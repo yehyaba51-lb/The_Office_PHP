@@ -32,7 +32,12 @@ class CoursModel
         }
 
         mysqli_stmt_bind_param($stmt, "i", $id);
-        mysqli_stmt_execute($stmt);
+
+        $execute = mysqli_stmt_execute($stmt);
+            
+        if(!$execute){
+            return false;
+        }
 
         $result = mysqli_stmt_get_result($stmt);
 
@@ -101,7 +106,12 @@ class CoursModel
         }
 
         mysqli_stmt_bind_param($stmt, "i", $formateur_id);
-        mysqli_stmt_execute($stmt);
+
+        $execute = mysqli_stmt_execute($stmt);
+            
+        if(!$execute){
+            return false;
+        }
 
         $result = mysqli_stmt_get_result($stmt);
 
@@ -131,7 +141,12 @@ class CoursModel
         }
 
         mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
-        mysqli_stmt_execute($stmt);
+        
+        $execute = mysqli_stmt_execute($stmt);
+            
+        if(!$execute){
+            return false;
+        }
 
         $result = mysqli_stmt_get_result($stmt);
 
@@ -187,7 +202,11 @@ class CoursModel
         }
 
         mysqli_stmt_bind_param($stmt, "i", $cours_id);
-        mysqli_stmt_execute($stmt);
+        $execute = mysqli_stmt_execute($stmt);
+
+        if(!$execute){
+            return false;
+        }
 
         $result = mysqli_stmt_get_result($stmt);
 
@@ -215,7 +234,11 @@ class CoursModel
 
         $cours_titre = strtolower($data['cours_titre']);
         mysqli_stmt_bind_param($stmt, "sii", $cours_titre, $data['formateur_id'], $data['categorie_id']);
-        mysqli_stmt_execute($stmt);
+        $execute = mysqli_stmt_execute($stmt);
+            
+        if(!$execute){
+            return false;
+        }
 
         return mysqli_insert_id($this->conn);
     }
@@ -241,7 +264,13 @@ class CoursModel
 
         $cours_titre = strtolower($data['cours_titre']);
         mysqli_stmt_bind_param($stmt, "siii", $cours_titre, $data['formateur_id'], $data['categorie_id'], $id);
-        return mysqli_stmt_execute($stmt);
+        $execute = mysqli_stmt_execute($stmt);
+
+        if(!$execute){
+            return false;    
+        }
+
+        return $execute;
     }
 
     public function supprimerCours($id)
@@ -254,6 +283,12 @@ class CoursModel
         }
 
         mysqli_stmt_bind_param($stmt, "i", $id);
-        return mysqli_stmt_execute($stmt);
+        $execute = mysqli_stmt_execute($stmt);
+
+        if(!$execute){
+            return false;
+        }
+
+        return $execute;
     }
 }
