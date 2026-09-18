@@ -29,6 +29,17 @@
 
                 http_response_code(200);
                 echo json_encode($statistics);
+            } else if(isset($_GET['formateurcours'])){
+                $coursByFormateur = $manager->getCoursByFormateur($_GET['id']);
+
+                if($coursByFormateur === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Error fetching']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($coursByFormateur);
             } else {
                 $coursById = $manager->getCours($_GET['id']);
     
