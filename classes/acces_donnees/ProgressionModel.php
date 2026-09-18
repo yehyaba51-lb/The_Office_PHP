@@ -18,7 +18,11 @@
                 return false;
             }
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -64,8 +68,7 @@
                 "SELECT *
                 FROM progression
                 WHERE etudiant_id = ?
-                AND cours_id = ?
-                AND lecon_id = ?"
+                AND cours_id = ?"
             );
 
             if (!$stmt) {
@@ -73,7 +76,11 @@
                 return false;
             }
             mysqli_stmt_bind_param($stmt, "ii", $etudiant_id, $cours_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -102,7 +109,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "iisis", $data['etudiant_id'], $data['cours_id'], $data['complete_le'], $data['derniere_lecon_id'], $data['modifie_le']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }
@@ -116,6 +127,11 @@
                     AND cours_id = ?"
                 );
 
+                if(!$stmt){
+                    error_log('Prepare failed: ' . mysqli_error($this->conn));
+                    return false;
+                }
+
                 mysqli_stmt_bind_param($stmt, "dii", $data['note_finale'], $data['etudiant_id'], $data['cours_id']);
 
             } else if($data['complete_le'] !== null){
@@ -125,6 +141,11 @@
                     WHERE etudiant_id = ?
                     AND cours_id = ?"
                 );
+
+                if(!$stmt){
+                    error_log('Prepare failed: ' . mysqli_error($this->conn));
+                    return false;
+                }
                 
                 mysqli_stmt_bind_param($stmt, "siii", $data['complete_le'], $data['derniere_lecon_id'], $data['etudiant_id'], $data['cours_id']);
             } else {
@@ -135,14 +156,20 @@
                     AND cours_id = ?"
                 );
 
+                if(!$stmt){
+                    error_log('Prepare failed: ' . mysqli_error($this->conn));
+                    return false;
+                }
+
                 mysqli_stmt_bind_param($stmt, "iii", $data['derniere_lecon_id'], $data['etudiant_id'], $data['cours_id']);
             }
 
-            if (!$stmt) {
-                error_log('Prepare failed: ' . mysqli_error($this->conn));
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
                 return false;
             }
 
-            return mysqli_stmt_execute($stmt);
+            return $execute;
         }
     }
