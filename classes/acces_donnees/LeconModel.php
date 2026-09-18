@@ -59,7 +59,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $cours_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
