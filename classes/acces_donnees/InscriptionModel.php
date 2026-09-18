@@ -18,7 +18,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -49,7 +53,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+            
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -59,7 +67,7 @@
         public function getInscriptionByFormateur($formateur_id){
             $stmt = mysqli_prepare($this->conn, 
                 "SELECT 
-                    i.inscription_id,
+                    i.inscription_id AS id,
                     CONCAT(u.prenom, ' ', u.nom) AS etudiant,
                     c.cours_titre,
                     DATE(i.inscrit_le) AS inscrit_le,
@@ -166,6 +174,12 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return $execute;
         }
     }
