@@ -60,6 +60,10 @@
             $rows = $this->exerciceModel->getExercicesByLecon($lecon_id, $cours_id);
             $allExercices = [];
 
+            if($rows === false){
+                return false;
+            }
+            
             foreach ($rows as $row) {
                 $exercice = new Exercice();
                 $exercice->setExerciceId($row['exercice_id']);
@@ -86,7 +90,7 @@
             $rows = $this->questionModel->getQuestionsByExercice($exercice_id);
             $allQuestions = [];
             
-            if(!$rows){
+            if($rows === false){
                 return false;
             }
 
@@ -133,7 +137,7 @@
             $rows = $this->choixModel->getChoixByQuestion($question_id);
             $allChoix = [];
            
-            if(!$rows){
+            if($rows === false){
                 return false;
             }
 
@@ -199,7 +203,7 @@
             $rows = $this->soumissionModel->getSoumissionsByEtudiant($etudiant_id);
             $allSoumission = [];
 
-            if(!$rows){
+            if($rows === false){
                 return false;
             }
 
