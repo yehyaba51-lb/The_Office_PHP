@@ -3,7 +3,8 @@
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
 
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: ' . $_ENV['FRONTEND_URL']);
+    header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Allow-Headers: Content-Type');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -21,9 +22,9 @@
             if(isset($_GET['formateur'])){
                 $statistics = $manager->getStatistiquesFormateur($_GET['id']);
 
-                if(!$statistics){
+                if($statistics === false){
                     http_response_code(400);
-                    echo json_encode(['error' => 'Id manquante']);
+                    echo json_encode(['error' => 'Impossible de récupérer les informations']);
                     exit;
                 }
 
@@ -34,7 +35,7 @@
 
                 if($coursByFormateur === false){
                     http_response_code(500);
-                    echo json_encode(['error' => 'Error fetching']);
+                    echo json_encode(['error' => 'Impossible de récupérer les cours']);
                     exit;
                 }
 
@@ -43,9 +44,9 @@
             } else {
                 $coursById = $manager->getCours($_GET['id']);
     
-                if(!$coursById){
+                if($coursById === false){
                     http_response_code(400);
-                    echo json_encode(['error' => 'Id manquante']);
+                    echo json_encode(['error' => "Cours introuvable"]);
                     exit;
                 }
     
@@ -54,7 +55,7 @@
             }
         } else {
             $allCours = $manager->getAllCours();
-            if(!$allCours){
+            if($allCours === false){
                 http_response_code(500);
                 echo json_encode(['error' => 'Impossible de récupérer les cours']);
                 exit;
