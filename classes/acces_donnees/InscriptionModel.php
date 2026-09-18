@@ -36,7 +36,7 @@
                     i.note_finale,
                     (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = p.cours_id ) AS total
                 FROM inscription AS i
-                INNER JOIN progression AS p
+                LEFT JOIN progression AS p
                 ON i.etudiant_id = p.etudiant_id
                 AND i.cours_id = p.cours_id
                 INNER JOIN utilisateur AS u
@@ -62,8 +62,10 @@
                     i.inscription_id,
                     CONCAT(u.prenom, ' ', u.nom) AS etudiant,
                     c.cours_titre,
-                    i.inscrit_le,
-                    i.note_finale
+                    DATE(i.inscrit_le) AS inscrit_le,
+                    i.note_finale,
+                    (SELECT COUNT(*) FROM progression_lecon AS pl WHERE pl.cours_id = c.cours_id AND statut = 'terminee') AS current,
+                    (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id) AS total
                 FROM inscription AS i
                 INNER JOIN cours AS c
                 ON i.cours_id = c.cours_id
