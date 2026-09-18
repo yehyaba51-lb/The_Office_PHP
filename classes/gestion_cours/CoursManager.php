@@ -70,7 +70,7 @@ class CoursManager
     {
         $row = $this->coursModel->getCours($id);
 
-        if (!$row) {
+        if ($row === false) {
             return false;
         }
 
@@ -82,7 +82,7 @@ class CoursManager
     {
         $rows = $this->coursModel->getAllCours();
             
-        if(!$rows){
+        if($rows === false){
             return false;
         }
 
@@ -103,11 +103,27 @@ class CoursManager
 
 
     public function getStatistiquesFormateur($formateur_id){
+        $cours = $this->coursModel->getNombreCours($formateur_id);
+        if($cours === false){
+            return false;
+        }
+        $inscriptions = $this->inscriptionModel->compterEtudiants($formateur_id);
+        if($inscriptions === false){
+            return false;
+        }
+        $soumissions = $this->soumissionModel->compterSoumissionsNonCorrigees($formateur_id);
+        if($soumissions === false) {
+            return false;
+        }
+        $completion = $this->progressionModel->calculerTauxCompletion($formateur_id);
+        if($completion === false){ 
+            return false;
+        }
         return [
-            'cours' => $this->coursModel->getNombreCours($formateur_id),
-            'etudiants' => $this->inscriptionModel->compterEtudiants($formateur_id),
-            'soumissions' => $this->soumissionModel->compterSoumissionsNonCorrigees($formateur_id),
-            'completion' => $this->progressionModel->calculerTauxCompletion($formateur_id)
+            'cours' => $cours,
+            'etudiants' => $inscriptions,
+            'soumissions' => $soumissions,
+            'completion' => $completion
         ];
     }
 
@@ -115,6 +131,10 @@ class CoursManager
     {
         $rows = $this->leconModel->getLeconsByCours($cours_id);
         $result = [];
+
+        if($rows === false){
+            return false;
+        }
 
         foreach ($rows as $row) {
             $types = [];
@@ -133,6 +153,10 @@ class CoursManager
     {
         $rows = $this->leconTexteModel->getLeconTextesByLecon($lecon_id);
         $allLeconTextes = [];
+
+        if($rows === false){
+            return false;
+        }
 
         foreach ($rows as $row) {
             $leconTexte = new LeconTexte();
@@ -166,6 +190,10 @@ class CoursManager
         $rows = $this->leconPdfModel->getLeconPdfsByLecon($lecon_id);
         $allLeconPdfs = [];
 
+        if($rows === false){
+            return false;
+        }
+
         foreach ($rows as $row) {
             $leconPdf = new LeconPdf();
             $leconPdf->setLeconId($row['lecon_id']);
@@ -198,6 +226,10 @@ class CoursManager
         $rows = $this->leconVideoModel->getLeconVideosByLecon($lecon_id);
         $allLeconVideos = [];
 
+        if($rows === false){
+            return false;
+        }
+        
         foreach ($rows as $row) {
             $leconVideo = new LeconVideo();
             $leconVideo->setLeconId($row['lecon_id']);
@@ -233,6 +265,10 @@ class CoursManager
         $rows = $this->coursModel->getCoursByEtudiant($etudiant_id);
         $allCours = [];
 
+        if($rows === false){
+            return false;
+        }
+
         foreach ($rows as $row) {
             $cours = new Cours();
             $cours->setCoursId($row['cours_id']);
@@ -254,6 +290,10 @@ class CoursManager
         $rows = $this->coursModel->getEtudiantsByCours($cours_id);
         $allEtudiants = [];
 
+        if($rows === false){
+            return false;
+        }
+
         foreach ($rows as $row) {
             $etudiant = new Etudiant();
             $etudiant->setUtilisateurId($row['utilisateur_id']);
@@ -272,7 +312,7 @@ class CoursManager
     public function getAllInscriptions(){
         $rows = $this->inscriptionModel->getAllInscriptions();
 
-        if(!$rows){
+        if($rows === false){
             return false;
         }
 
@@ -327,7 +367,7 @@ class CoursManager
     {
         $rows = $this->categorieModel->getAllCategories();
         
-        if(!$rows){
+        if($rows === false){
             return false;
         }
 
