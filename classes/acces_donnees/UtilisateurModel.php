@@ -19,7 +19,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -36,7 +40,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "s", $email);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -67,7 +75,12 @@
                 return false;
             }
 
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
             $result = mysqli_stmt_get_result($stmt);
 
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -97,7 +110,13 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return $execute;
         }
 
         public function changerPassword($id, $data){
@@ -117,7 +136,13 @@
 
             $mot_de_passe_hash = password_hash($data['password'], PASSWORD_DEFAULT);
             mysqli_stmt_bind_param($stmt, "si", $mot_de_passe_hash, $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return $execute;
         }
     
         public function creerUtilisateur($data)
@@ -192,7 +217,13 @@
             $nom = strtolower($data['nom']);
             $email = strtolower($data['email']);
             mysqli_stmt_bind_param($stmt, "sssi", $prenom, $nom, $email, $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return $execute;
             
         }
 
@@ -212,7 +243,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "si", $mot_de_passe_hash, $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
 
             return [
                 'id' => $id,
@@ -229,6 +264,12 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return $execute;
         }
     }
