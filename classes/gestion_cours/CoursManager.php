@@ -93,21 +93,12 @@ class CoursManager
     public function getCoursByFormateur($formateur_id)
     {
         $rows = $this->coursModel->getCoursByFormateur($formateur_id);
-        $allCours = [];
-
-        foreach ($rows as $row) {
-            $cours = new Cours();
-            $cours->setCoursId($row['cours_id']);
-            $cours->setTitre($row['cours_titre']);
-            $cours->setDescription($row['description']);
-            $cours->setFormateurId($row['formateur_id']);
-            $cours->setCategorieId($row['categorie_id']);
-            $cours->setCreeLe($row['cree_le']);
-            $cours->setUrlImage($row['url_image']);
-
-            $allCours[] = $cours;
+        
+        if($rows === false){
+            return false;
         }
-        return $allCours;
+
+        return $rows;
     }
 
 
