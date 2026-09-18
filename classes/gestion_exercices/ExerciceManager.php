@@ -75,7 +75,7 @@
         public function getSoumissionFormateur($formateur_id){
             $rows = $this->soumissionModel->getSoumissionFormateur($formateur_id);
 
-            if(!$rows){
+            if($rows === false){
                 return false;
             }
 
