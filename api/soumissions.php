@@ -43,6 +43,34 @@
             }
         } else {
             $allSoumissions = $manager->getAllSoumissions();
+
+            if($allSoumissions === false){
+                http_response_code(400);
+                echo json_encode(['error' => 'Impossible de récupérer les soumissions']);
+                exit;
+            }
+
+            http_response_code(200);
+            echo json_encode($allSoumissions);
+        }
+    } else if($_SERVER['REQUEST_METHOD'] === 'PUT'){
+         if(!isset($_GET['id'])){
+            http_response_code(400);
+            echo json_encode(['error' => 'Id manquant']);
+            exit;
+        } else {
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            $result = $manager->corrigerSoumission($_GET['id'], $data['corrige_par'], $data['note'], $data['commentaire']);
+            
+            if(!$result){
+                http_response_code(400);
+                echo json_encode(['error' => 'Impossible de modifier la soumission']);
+                exit;
+            }
+    
+            http_response_code(200);
+            echo json_encode($result);
         }
     } else {
         http_response_code(405);
