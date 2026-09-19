@@ -72,7 +72,10 @@
                     c.cours_titre,
                     DATE(i.inscrit_le) AS inscrit_le,
                     i.note_finale,
-                    (SELECT COUNT(*) FROM progression_lecon AS pl WHERE pl.cours_id = c.cours_id AND statut = 'terminee') AS current,
+                    (SELECT COUNT(*) FROM progression_lecon AS pl
+                    WHERE pl.cours_id = c.cours_id
+                        AND pl.etudiant_id = i.etudiant_id
+                        AND statut = 'terminee') AS current,
                     (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id) AS total
                 FROM inscription AS i
                 INNER JOIN cours AS c
