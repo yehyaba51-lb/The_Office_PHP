@@ -147,6 +147,7 @@ CREATE TABLE choix(
     question_id INT NOT NULL,
     texte_choix VARCHAR(255) NOT NULL,
     est_correct BOOLEAN NOT NULL,
+    ordre INT, 
 
     FOREIGN KEY (question_id) REFERENCES question(question_id) ON DELETE CASCADE
 );
