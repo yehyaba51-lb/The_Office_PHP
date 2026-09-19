@@ -19,18 +19,27 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
         if(isset($_GET['id'])){
             if(isset($_GET['formateur'])){
-                $soumissionByFormateur = $manager->getSoumissionFormateur($_GET['id']);
+                $soumissionDashboard = $manager->getSoumissionDashboard($_GET['id']);
 
-                if($soumissionByFormateur === false){
+                if($soumissionDashboard === false){
                     http_response_code(400);
                     echo json_encode(['error' => 'Impossible de récupérer les soumissions']);
                     exit;
                 }
 
                 http_response_code(200);
-                echo json_encode($soumissionByFormateur);
+                echo json_encode($soumissionDashboard);
             } else {
+                $soumissionsByFormateur = $manager->getSoumissionFormateur($_GET['id']);
 
+                if($soumissionsByFormateur === false){
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Impossible de récupérer les soumissions']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($soumissionsByFormateur);
             }
         } else {
             $allSoumissions = $manager->getAllSoumissions();
