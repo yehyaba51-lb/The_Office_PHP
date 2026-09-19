@@ -183,10 +183,16 @@
                     s.soumission_id AS id,
                     CONCAT(u.prenom, ' ', u.nom) AS etudiant,
                     c.cours_titre,
+                    q.question_id,
                     q.texte_question,
+                    e.exercice_titre,
                     s.soumis_le,
                     q.question_type,
-                    s.corrige_le
+                    s.corrige_le,
+                    s.url_fichier,
+                    s.soumission_reponse,
+                    s.note,
+                    s.commentaire
                 FROM soumission AS s
                 INNER JOIN question AS q
                 ON q.question_id = s.question_id
@@ -216,14 +222,25 @@
         }
 
         public function corrigerSoumission($id, $data){
-            $stmt = mysqli_prepare($this->conn, "UPDATE soumission SET note = ?, commentaire = ?, corrige_le = NOW(), corrige_par = ? WHERE soumission_id = ?");
+            if($data['note'] !== null && $data['note'] !== '' && (!is_numeric($data['note']) || $data['note'] < 0 || $data['note'] > 20)){
+                return false;
+            }
+
+            $stmt = mysqli_prepare($this->conn,
+                "UPDATE soumission AS s
+                INNER JOIN question AS q ON q.question_id = s.question_id
+                INNER JOIN exercice AS e ON e.exercice_id = q.exercice_id
+                INNER JOIN cours AS c ON c.cours_id = e.cours_id
+                SET s.note = ?, s.commentaire = ?, s.corrige_le = NOW(), s.corrige_par = ?
+                WHERE s.soumission_id = ? AND c.formateur_id = ?"
+            );
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "dsii", $data['note'], $data['commentaire'], $data['corrige_par'], $id);
+            mysqli_stmt_bind_param($stmt, "dsiii", $data['note'], $data['commentaire'], $data['corrige_par'], $id, $data['corrige_par']);
             $execute = mysqli_stmt_execute($stmt);
 
             if(!$execute){
