@@ -145,22 +145,12 @@
 
         public function getChoixByQuestion($question_id){
             $rows = $this->choixModel->getChoixByQuestion($question_id);
-            $allChoix = [];
            
             if($rows === false){
                 return false;
             }
 
-            foreach ($rows as $row) {
-                $choix = new Choix();
-                $choix->setChoixId($row['choix_id']);
-                $choix->setQuestionId($row['question_id']);
-                $choix->setTexteChoix($row['texte_choix']);
-                $choix->setEstCorrect($row['est_correct']);
-
-                $allChoix[] = $choix;
-            }
-            return $allChoix;
+            return $rows;
         }
 
         public function createChoix($question_id, $texte_choix, $est_correct){
