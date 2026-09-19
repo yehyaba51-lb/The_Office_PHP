@@ -76,6 +76,16 @@
             return $allExercices;
         }
 
+        public function getSoumissionDashboard($formateur_id){
+            $rows = $this->soumissionModel->getSoumissionDashboard($formateur_id);
+
+            if($rows === false){
+                return false;
+            }
+
+            return $rows;
+        }
+
         public function getSoumissionFormateur($formateur_id){
             $rows = $this->soumissionModel->getSoumissionFormateur($formateur_id);
 
