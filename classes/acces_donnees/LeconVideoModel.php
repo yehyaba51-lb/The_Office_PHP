@@ -26,15 +26,21 @@
             return mysqli_fetch_assoc($result);
         }
 
-        public function getLeconVideosByLecon($lecon_id){
-            $stmt = mysqli_prepare($this->conn, "SELECT * FROM lecon_video WHERE lecon_id = ?");
+        public function getLeconVideosByLecon($lecon_id, $cours_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT *
+                FROM lecon_video
+                WHERE lecon_id = ?
+                AND cours_id = ?
+                ORDER BY video_order"
+            );
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "i", $lecon_id);
+            mysqli_stmt_bind_param($stmt, "ii", $lecon_id, $cours_id);
             mysqli_stmt_execute($stmt);
 
             $result = mysqli_stmt_get_result($stmt);
