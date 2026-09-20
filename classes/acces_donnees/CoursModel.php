@@ -273,6 +273,32 @@ class CoursModel
         return $execute;
     }
 
+    public function updateDescription($cours_id, $data){
+        if(!preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-,.!?;()\n]*$/", $data['description'])){
+            return false;
+        }
+
+        $stmt = mysqli_prepare($this->conn, 
+            "UPDATE cours
+            SET description = ?
+            WHERE cours_id = ?"
+        );
+
+        if(!$stmt){
+            error_log('Prepare failed: ' . mysqli_error($this->conn));
+            return false;
+        }
+
+        mysqli_stmt_bind_param($stmt, "si", $data['description'], $cours_id);
+        $execute = mysqli_stmt_execute($stmt);
+
+        if(!$execute){
+            return false;
+        }
+
+        return $execute;
+    }
+
     public function supprimerCours($id)
     {
         $stmt = mysqli_prepare($this->conn, "DELETE FROM cours WHERE cours_id = ?");
