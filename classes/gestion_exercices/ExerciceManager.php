@@ -56,6 +56,15 @@
             return $exercice;
         }
         
+        public function getExercicesByCours($cours_id){
+            $rows = $this->exerciceModel->getExercicesByCours($cours_id);
+
+            if($rows === false){
+                return false;
+            }
+
+            return $rows;
+        }
         public function getExercicesByLecon($lecon_id, $cours_id){
             $rows = $this->exerciceModel->getExercicesByLecon($lecon_id, $cours_id);
             $allExercices = [];
