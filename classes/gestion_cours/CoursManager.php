@@ -55,6 +55,10 @@ class CoursManager
         return $this->coursModel->creerCours($data);
     }
 
+    public function updateDescription($cours_id, $data){
+        return $this->coursModel->updateDescription($cours_id, $data);
+    }
+
     public function ajouterLecon($cours_id, $lecon_titre, $lecon_order)
     {
         $data = [
@@ -127,6 +131,16 @@ class CoursManager
         ];
     }
 
+    public function getLecon($cours_id, $lecon_id){
+        $row = $this->leconModel->getLecon($cours_id, $lecon_id);
+
+        if($row === false){
+            return false;
+        }
+
+        return $row;
+    }
+
     public function getLeconsByCours($cours_id)
     {
         $rows = $this->leconModel->getLeconsByCours($cours_id);
@@ -148,6 +162,34 @@ class CoursManager
         return $result;
     }
 
+    public function getAllContent($lecon_id, $cours_id){
+        $videos = $this->leconVideoModel->getLeconVideosByLecon($lecon_id, $cours_id);
+        if($videos === false){
+            return false;
+        }
+
+        $textes = $this->leconTexteModel->getLeconTextesByLecon($lecon_id, $cours_id);
+        if($textes === false){
+            return false;
+        }
+
+        $pdfs = $this->leconPdfModel->getLeconPdfsByLecon($lecon_id, $cours_id);
+        if($pdfs === false){
+            return false;
+        }
+
+        $allContent = [
+            'videos' => $videos,
+            'textes' => $textes,
+            'pdfs' => $pdfs
+        ];
+
+        if($allContent === false){
+            return false;
+        }
+
+        return $allContent;
+    }
 
     public function getLeconTextesByLecon($lecon_id)
     {
