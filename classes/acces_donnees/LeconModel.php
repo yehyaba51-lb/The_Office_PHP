@@ -9,15 +9,15 @@
         }
 
         // lecon table
-        public function getLecon($id){
-            $stmt = mysqli_prepare($this->conn, "SELECT * FROM lecon WHERE lecon_id = ?");
+        public function getLecon($cours_id, $lecon_id){
+            $stmt = mysqli_prepare($this->conn, "SELECT * FROM lecon WHERE lecon_id = ? AND cours_id = ?");
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_bind_param($stmt, "ii", $lecon_id ,$cours_id);
             mysqli_stmt_execute($stmt);
 
             $result = mysqli_stmt_get_result($stmt);
