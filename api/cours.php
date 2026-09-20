@@ -83,18 +83,33 @@
             echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
-            $data = json_decode(file_get_contents("php://input"), true);
-    
-            $result = $manager->updateCoursByAdmin($_GET['id'], $data);
-            
-            if(!$result){
-                http_response_code(400);
-                echo json_encode(['error' => 'Cours modifié invalide']);
-                exit;
+            if(isset($_GET['description'])){
+                $data = json_decode(file_get_contents("php://input"), true);
+
+                $result = $manager->updateDescription($_GET['id'], $data);
+
+                if($result === false){
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Impossible de modifier la description']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($result);
+            } else {
+                $data = json_decode(file_get_contents("php://input"), true);
+        
+                $result = $manager->updateCoursByAdmin($_GET['id'], $data);
+                
+                if(!$result){
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Cours modifié invalide']);
+                    exit;
+                }
+        
+                http_response_code(200);
+                echo json_encode($result);
             }
-    
-            http_response_code(200);
-            echo json_encode($result);
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
         if(!isset($_GET['id'])){
