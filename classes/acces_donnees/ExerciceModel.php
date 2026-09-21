@@ -88,7 +88,7 @@
         }
 
         public function creerExercice($data){
-            if(empty($data['exercice_titre']) || strlen(trim($data['exercice_titre'])) < 2 || !preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/u', $data['exercice_titre'])){
+            if(empty($data['exercice_titre']) || strlen(trim($data['exercice_titre'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-,.!?;()\n]*$/u", $data['exercice_titre'])){
                 return false;
             }
 
