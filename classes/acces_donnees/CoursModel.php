@@ -19,7 +19,7 @@ class CoursModel
                 c.cours_titre,
                 c.description,
                 CONCAT(u.prenom, ' ', u.nom) AS formateur,
-                c.url_image
+                c.url_image,
                 (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
                 (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id ) AS lecons
             FROM cours AS c
