@@ -9,7 +9,7 @@
         }
 
         // lecon table
-        public function getLecon($cours_id, $lecon_id){
+        public function getLecon($lecon_id, $cours_id){
             $stmt = mysqli_prepare($this->conn, "SELECT * FROM lecon WHERE lecon_id = ? AND cours_id = ?");
 
             if (!$stmt) {
