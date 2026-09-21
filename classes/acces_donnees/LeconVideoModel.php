@@ -26,7 +26,7 @@
             return mysqli_fetch_assoc($result);
         }
 
-        public function getLeconVideosByLecon($lecon_id, $cours_id){
+        public function getLeconVideosByLecon($cours_id, $lecon_id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT *
                 FROM lecon_video

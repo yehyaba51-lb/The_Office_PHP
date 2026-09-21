@@ -26,7 +26,7 @@
             return mysqli_fetch_assoc($result);
         }
 
-        public function getLeconTextesByLecon($lecon_id, $cours_id){
+        public function getLeconTextesByLecon($cours_id, $lecon_id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT *
                 FROM lecon_texte
