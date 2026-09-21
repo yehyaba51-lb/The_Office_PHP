@@ -16,7 +16,7 @@
 
             $mime = $this->getMimeType($file['tmp_name']);
 
-            $types_accepted = ['application/pdf', 'video/mp4'];
+            $types_accepted = ['application/pdf', 'video/mp4', 'image/jpeg', 'image/png'];
 
             if(!in_array($mime, $types_accepted)){
                 return false;
