@@ -22,16 +22,30 @@
             echo json_encode(['error' => 'Id manquante']);
             exit;
         } else {
-            $allChoix = $manager->getChoixByQuestion($_GET['id']);
+            if(isset($_GET['exercice'])){
+                $choixExercice = $manager->getChoixByExercice($_GET['id']);
 
-            if($allChoix === false){
-                http_response_code(500);
-                echo json_encode(['error' => 'Impossible de récupérer les choix']);
-                exit;
+                if($choixExercice === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Impossible de récupérer les choix']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($choixExercice);
+            } else {
+                $allChoix = $manager->getChoixByQuestion($_GET['id']);
+    
+                if($allChoix === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Impossible de récupérer les choix']);
+                    exit;
+                }
+    
+                http_response_code(200);
+                echo json_encode($allChoix);
+
             }
-
-            http_response_code(200);
-            echo json_encode($allChoix);
         }
     } else {
         http_response_code(405);
