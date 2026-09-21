@@ -131,8 +131,8 @@ class CoursManager
         ];
     }
 
-    public function getLecon($cours_id, $lecon_id){
-        $row = $this->leconModel->getLecon($cours_id, $lecon_id);
+    public function getLecon($lecon_id, $cours_id){
+        $row = $this->leconModel->getLecon($lecon_id, $cours_id);
 
         if($row === false){
             return false;
@@ -162,18 +162,18 @@ class CoursManager
         return $result;
     }
 
-    public function getAllContent($lecon_id, $cours_id){
-        $videos = $this->leconVideoModel->getLeconVideosByLecon($lecon_id, $cours_id);
+    public function getAllContent($cours_id, $lecon_id){
+        $videos = $this->leconVideoModel->getLeconVideosByLecon($cours_id, $lecon_id);
         if($videos === false){
             return false;
         }
 
-        $textes = $this->leconTexteModel->getLeconTextesByLecon($lecon_id, $cours_id);
+        $textes = $this->leconTexteModel->getLeconTextesByLecon($cours_id, $lecon_id);
         if($textes === false){
             return false;
         }
 
-        $pdfs = $this->leconPdfModel->getLeconPdfsByLecon($lecon_id, $cours_id);
+        $pdfs = $this->leconPdfModel->getLeconPdfsByLecon($cours_id, $lecon_id);
         if($pdfs === false){
             return false;
         }
