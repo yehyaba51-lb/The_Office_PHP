@@ -107,44 +107,75 @@
 
         public function getQuestionsByExercice($exercice_id){
             $rows = $this->questionModel->getQuestionsByExercice($exercice_id);
-            $allQuestions = [];
-            
+
             if($rows === false){
                 return false;
             }
 
-            foreach ($rows as $row) {
-                $question = new Question();
-                $question->setQuestionId($row['question_id']);
-                $question->setExerciceId($row['exercice_id']);
-                $question->setTexteQuestion($row['texte_question']);
-                $question->setQuestionType($row['question_type']);
+            return $rows;
+        }
 
-                $allQuestions[] = $question;
+        public function creerQuestion($data){
+            $question_data = [
+                'exercice_id' => $data['exercice_id'],
+                'texte_question' => $data['texte_question'],
+                'question_type' => $data['question_type']
+            ];
+            $question_id = $this->questionModel->creerQuestion($question_data);
+
+            if($question_id === false){
+                return false;
             }
 
-            return $allQuestions;
+            if($data['question_type'] === 'QCM' && !empty($data['choix'])){
+
+                foreach ($data['choix'] as $choix) {
+                    $choix_row = [
+                        'question_id' => $question_id,
+                        'texte_choix' => $choix['texte'],
+                        'est_correct' => $choix['correct']
+
+                    ];
+                    
+                    $result = $this->choixModel->creerChoix($choix_row);
+                    if($result === false){
+                        return false;
+                    }
+                }
+            }
+            return $question_id;
         }
 
-        public function creerQuestion($exercice_id, $texte_question, $question_type){
-            $data = [
-                'exercice_id' => $exercice_id,
-                'texte_question' => $texte_question,
-                'question_type' => $question_type
+
+        public function updateQuestion($question_id, $data){
+            $question_data = [
+                'exercice_id' => $data['exercice_id'],
+                'texte_question' => $data['texte_question'],
+                'question_type' => $data['question_type']
             ];
+            $execute = $this->questionModel->updateQuestion($question_id, $question_data);
 
-            return $this->questionModel->creerQuestion($data);
-        }
+            if($execute === false){
+                return false;
+            }
 
+            if($data['question_type'] === 'QCM' && !empty($data['choix'])){
 
-        public function updateQuestion($question_id, $exercice_id, $texte_question, $question_type){
-            $data = [
-                'exercice_id' => $exercice_id,
-                'texte_question' => $texte_question,
-                'question_type' => $question_type
-            ];
+                foreach ($data['choix'] as $choix) {
+                    $choix_row = [
+                        'texte_choix' => $choix['texte'],
+                        'est_correct' => $choix['correct']
 
-            return $this->questionModel->updateQuestion($question_id, $data);
+                    ];
+                    
+                    $result = $this->choixModel->updateChoix($choix['choix_id'], $choix_row);
+                    if($result === false){
+                        return false;
+                    }
+                }
+            }
+
+            return $execute;
         }
 
         
@@ -154,6 +185,16 @@
 
         public function getChoixByQuestion($question_id){
             $rows = $this->choixModel->getChoixByQuestion($question_id);
+           
+            if($rows === false){
+                return false;
+            }
+
+            return $rows;
+        }
+
+        public function getChoixByExercice($exercice_id){
+            $rows = $this->choixModel->getChoixByExercice($exercice_id);
            
             if($rows === false){
                 return false;
