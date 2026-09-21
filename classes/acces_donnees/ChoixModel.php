@@ -60,7 +60,7 @@
         }
         public function getChoixByExercice($exercice_id){
             $stmt = mysqli_prepare($this->conn, 
-                "SELECT ch.*
+                "SELECT DISTINCT ch.*
                 FROM choix AS ch
                 INNER JOIN question AS q ON q.question_id = ch.question_id
                 WHERE q.exercice_id = ?
