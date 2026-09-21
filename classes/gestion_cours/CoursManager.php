@@ -262,6 +262,9 @@ class CoursManager
         return $this->leconPdfModel->creerLeconPdf($data);
     }
 
+    public function updateImage($cours_id, $data){
+        return $this->coursModel->updateImage($cours_id, $data);
+}
 
     public function getLeconVideosByLecon($lecon_id)
     {
