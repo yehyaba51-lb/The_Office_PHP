@@ -19,6 +19,7 @@ class CoursModel
                 c.cours_titre,
                 c.description,
                 CONCAT(u.prenom, ' ', u.nom) AS formateur,
+                c.url_image
                 (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
                 (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id ) AS lecons
             FROM cours AS c
@@ -215,7 +216,7 @@ class CoursModel
 
     public function creerCours($data)
     {
-        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match('/^[a-zà-ÿ][a-zà-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
+        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['cours_titre'])){
             return false;
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
@@ -242,10 +243,30 @@ class CoursModel
 
         return mysqli_insert_id($this->conn);
     }
+    
+    public function updateImage($cours_id, $data){
+        $stmt = mysqli_prepare($this->conn, 
+            "UPDATE cours SET url_image = ? WHERE cours_id = ?"
+        );
+
+        if(!$stmt){
+            error_log('Prepare failed: ' . mysqli_error($this->conn));
+            return false;
+        }
+
+        mysqli_stmt_bind_param($stmt, "si", $data['url_image'], $cours_id);
+        $execute = mysqli_stmt_execute($stmt);
+
+        if(!$execute){
+            return false;
+        }
+
+        return $execute;
+    }
 
     public function updateCoursByAdmin($id, $data)
     {
-        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 5 || !preg_match('/^[a-zA-ZÀ-ÿ0-9\' :\-]*$/u', $data['cours_titre'])){
+        if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 5 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['cours_titre'])){
             return false;
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
