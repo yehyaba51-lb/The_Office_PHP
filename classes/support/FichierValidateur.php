@@ -1,6 +1,5 @@
 <?php
     class FichierValidateur{
-        private $TAILLE_MAX = 5 * 1024 * 1024;
 
         public function getMimeType($file_path){
             $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -9,14 +8,14 @@
         }
 
 
-        public function valider($file){
-            if($file['size'] > $this->TAILLE_MAX){
+        public function valider($file, $types_accepted, $TAILLE_MAX){
+            if($file['size'] > $TAILLE_MAX){
                 return false;
             }
 
             $mime = $this->getMimeType($file['tmp_name']);
 
-            $types_accepted = ['application/pdf', 'video/mp4', 'image/jpeg', 'image/png'];
+            
 
             if(!in_array($mime, $types_accepted)){
                 return false;
