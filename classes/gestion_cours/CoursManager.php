@@ -59,12 +59,12 @@ class CoursManager
         return $this->coursModel->updateDescription($cours_id, $data);
     }
 
-    public function ajouterLecon($cours_id, $lecon_titre, $lecon_order)
+    public function ajouterLecon($cours_id, $lecon_titre, $lecon_ordre)
     {
         $data = [
             'cours_id' => $cours_id,
             'lecon_titre' => $lecon_titre,
-            'lecon_order' => $lecon_order
+            'lecon_ordre' => $lecon_ordre
         ];
 
         return $this->leconModel->creerLecon($data);
@@ -214,13 +214,12 @@ class CoursManager
     }
 
 
-    public function createLeconTexte($lecon_id, $cours_id, $contenu_texte, $texte_ordre)
+    public function createLeconTexte($lecon_id, $cours_id, $contenu_texte)
     {
         $data = [
             'lecon_id' => $lecon_id,
             'cours_id' => $cours_id,
-            'contenu_texte' => $contenu_texte,
-            'texte_ordre' => $texte_ordre
+            'contenu_texte' => $contenu_texte
         ];
 
         return $this->leconTexteModel->creerLeconTexte($data);
@@ -250,13 +249,13 @@ class CoursManager
     }
 
 
-    public function createLeconPdf($lecon_id, $cours_id, $url_pdf, $pdf_ordre)
+    public function createLeconPdf($lecon_id, $cours_id, $url_pdf, $pdf_order)
     {
         $data = [
             'lecon_id' => $lecon_id,
             'cours_id' => $cours_id,
             'url_pdf' => $url_pdf,
-            'pdf_ordre' => $pdf_ordre
+            'pdf_order' => $pdf_order
         ];
 
         return $this->leconPdfModel->creerLeconPdf($data);
@@ -291,13 +290,13 @@ class CoursManager
     }
 
 
-    public function createLeconVideo($lecon_id, $cours_id, $url_video, $video_ordre, $duree)
+    public function createLeconVideo($lecon_id, $cours_id, $url_video, $video_order, $duree)
     {
         $data = [
             'lecon_id' => $lecon_id,
             'cours_id' => $cours_id,
             'url_video' => $url_video,
-            'video_ordre' => $video_ordre,
+            'video_order' => $video_order,
             'duree' => $duree,
         ];
 
