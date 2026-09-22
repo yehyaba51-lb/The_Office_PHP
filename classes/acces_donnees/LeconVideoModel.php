@@ -62,14 +62,14 @@
         }
 
         public function creerLeconVideo($data){
-            $stmt = mysqli_prepare($this->conn, "INSERT INTO lecon_video(lecon_id, cours_id, url_video, video_order) VALUES(?, ?, ?, ?)");
+            $stmt = mysqli_prepare($this->conn, "INSERT INTO lecon_video(lecon_id, cours_id, url_video, video_order, duree) VALUES(?, ?, ?, ?, ?)");
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
             
-            mysqli_stmt_bind_param($stmt, "iisi", $data['lecon_id'], $data['cours_id'], $data['url_video'], $data['video_order']);
+            mysqli_stmt_bind_param($stmt, "iisid", $data['lecon_id'], $data['cours_id'], $data['url_video'], $data['video_order'], $data['duree']);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
