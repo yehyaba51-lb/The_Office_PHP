@@ -42,7 +42,7 @@
                     echo json_encode(['error' => "Pas d'image uploadé"]);
                     exit;
                 } else {
-                    $valide = $validateur->valider($image);
+                    $valide = $validateur->valider($image, ['image/jpeg', 'image/png'], 5 * 1024 * 1024);
     
                     if($valide === false){
                         http_response_code(400);
