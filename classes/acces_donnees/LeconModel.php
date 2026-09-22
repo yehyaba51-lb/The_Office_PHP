@@ -100,8 +100,12 @@
 
             $lecon_titre = strtolower($data['lecon_titre']);
             mysqli_stmt_bind_param($stmt, "isi", $data['cours_id'], $lecon_titre, $data['lecon_ordre']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
 
+            if($execute === false){
+                return false;
+            }
+            
             return mysqli_insert_id($this->conn);
         }
 
