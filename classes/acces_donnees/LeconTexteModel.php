@@ -62,15 +62,42 @@
         }
 
         public function creerLeconTexte($data){
-            $stmt = mysqli_prepare($this->conn, "INSERT INTO lecon_texte(lecon_id, cours_id, contenu_texte, texte_ordre) VALUES(?, ?, ?, ?)");
+            $stmt = mysqli_prepare($this->conn, 
+                "SELECT MAX(texte_order) AS max_ordre
+                FROM lecon_texte
+                WHERE lecon_id = ? AND cours_id = ?"
+            );
 
-            if (!$stmt) {
+            if ($stmt === false) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iisi", $data['lecon_id'], $data['cours_id'], $data['contenu_texte'], $data['texte_ordre']);
-            mysqli_stmt_execute($stmt);
+            mysqli_stmt_bind_param($stmt, "ii", $data['lecon_id'], $data['cours_id']);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+
+            $texte_order = $row['max_ordre'] === null ? 1 : $row['max_ordre'] + 1;
+
+            $stmt = mysqli_prepare($this->conn, "INSERT INTO lecon_texte(lecon_id, cours_id, contenu_texte, texte_order) VALUES(?, ?, ?, ?)");
+
+            if ($stmt === false) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "iisi", $data['lecon_id'], $data['cours_id'], $data['contenu_texte'], $texte_order);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }
