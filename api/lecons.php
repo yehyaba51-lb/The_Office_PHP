@@ -3,7 +3,8 @@
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
 
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: ' . $_ENV['FRONTEND_URL']);
+    header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Allow-Headers: Content-Type');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -59,6 +60,25 @@
                 http_response_code(200);
                 echo json_encode($allLeconsByCours);
             }
+        }
+    } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if(!$_GET['id']){
+            http_response_code(400);
+            echo json_encode(['error' => 'Id cours manquante']);
+            exit;
+        } else {
+            $data = json_decode(file_get_contents("php://input"), true);
+    
+            $id = $manager->ajouterLecon($_GET['id'], $data['titre'], $data['ordre']);
+
+            if($id === false){
+                http_response_code(400);
+                echo json_encode(['error' => 'Leçon ajouté invalide']);
+                exit;
+            }
+
+            http_response_code(201);
+            echo json_encode($id);
         }
     } else {
         http_response_code(405);
