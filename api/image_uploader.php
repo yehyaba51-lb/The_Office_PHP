@@ -12,6 +12,7 @@
 
     require_once(__DIR__ . '/../classes/gestion_cours/CoursManager.php');
     require_once(__DIR__ . '/../classes/support/FichierValidateur.php');
+    require_once(__DIR__ . '/../classes/authentification/Authentification.php');
 
     
 
@@ -22,6 +23,8 @@
 
     $validateur = new FichierValidateur();
     $manager = new CoursManager();
+    $auth = new Authentification();
+
     
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(!isset($_FILES['fichier'])){
@@ -34,6 +37,12 @@
                 echo json_encode(['error' => 'Id manquante']);
                 exit;
             } else {
+                if(!$auth->verifierRole('Formateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
                 $image = $_FILES['fichier'];
                 $cours_id = $_GET['id'];
     
