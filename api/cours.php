@@ -11,8 +11,10 @@
 
 
     require_once(__DIR__ . '/../classes/gestion_cours/CoursManager.php');
+    require_once(__DIR__ . '/../classes/authentification/Authentification.php');
 
     $manager = new CoursManager();
+    $auth = new Authentification();
 
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
@@ -20,6 +22,12 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
         if(isset($_GET['id'])){
             if(isset($_GET['formateur'])){
+                if(!$auth->verifierRole('Formateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
                 $statistics = $manager->getStatistiquesFormateur($_GET['id']);
 
                 if($statistics === false){
@@ -31,6 +39,12 @@
                 http_response_code(200);
                 echo json_encode($statistics);
             } else if(isset($_GET['formateurcours'])){
+                if(!$auth->verifierRole('Formateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                
                 $coursByFormateur = $manager->getCoursByFormateur($_GET['id']);
 
                 if($coursByFormateur === false){
