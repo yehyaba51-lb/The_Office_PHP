@@ -353,3 +353,58 @@ INSERT INTO choix (question_id, texte_choix, est_correct, ordre) VALUES
 (46, 'Nord', FALSE, 1), (46, 'Sud', TRUE, 2), (46, 'Est uniquement', FALSE, 3), (46, 'Ouest uniquement', FALSE, 4),
 (48, 'Favorise la concentration', TRUE, 1), (48, 'Réduit les coûts', FALSE, 2), (48, 'Augmente le bruit', FALSE, 3), (48, 'Aucun avantage', FALSE, 4),
 (50, 'L''analyse des besoins des utilisateurs', TRUE, 1), (50, 'La couleur des murs', FALSE, 2), (50, 'Le prix du mobilier', FALSE, 3), (50, 'La taille du logo', FALSE, 4);
+
+INSERT INTO soumission (etudiant_id, question_id, soumission_reponse, url_fichier, soumis_le, corrige_le, corrige_par, note, commentaire) VALUES
+
+-- Student 5 (Yacine) — cours 1 — mixed statuses, some wrong QCM
+(5, 1, 'La balise <head> contient les métadonnées de la page.', NULL, '2026-07-19', '2026-07-20', 2, 16, 'Bonne réponse, un peu à préciser.'),
+(5, 2, '2', NULL, '2026-07-19', '2026-07-20', 2, 18, 'Correct.'),
+(5, 3, 'Elle aligne les éléments sur l''axe principal du conteneur.', NULL, '2026-07-21', '2026-07-22', 2, 17, 'Bien.'),
+(5, 4, '1', NULL, '2026-07-21', '2026-07-22', 2, 8,  'Mauvaise réponse, display: flex était la bonne.'),
+(5, 5, 'document.getElementById().', NULL, '2026-07-23', '2026-07-24', 2, 15, 'Correct.'),
+(5, 6, '4', NULL, '2026-07-23', '2026-07-24', 2, 16, 'Correct.'),
+(5, 7, 'Il empêche l''envoi du formulaire si le champ est vide.', NULL, '2026-07-26', NULL, NULL, NULL, NULL),
+(5, 8, '2', NULL, '2026-07-26', NULL, NULL, NULL, NULL),
+
+-- Student 6 (Amina) — cours 1 — newer, mostly pending
+(6, 1, 'La balise <head> contient les métadonnées.', NULL, '2026-07-20', '2026-07-21', 2, 17, 'Très bien.'),
+(6, 2, '2', NULL, '2026-07-20', '2026-07-21', 2, 18, 'Correct.'),
+(6, 3, 'Elle répartit l''espace horizontal entre les éléments.', NULL, '2026-08-27', NULL, NULL, NULL, NULL),
+(6, 4, '3', NULL, '2026-08-27', NULL, NULL, NULL, NULL),
+
+-- Student 7 (Ryma) — cours 4 — many answers, some wrong
+(7, 31, 'Une relation un-à-plusieurs.', NULL, '2026-07-25', '2026-07-27', 2, 18, 'Correct, bien expliqué.'),
+(7, 32, '1', NULL, '2026-07-25', '2026-07-27', 2, 18, 'Correct.'),
+(7, 33, 'Elle indique combien de lignes sont liées entre deux tables.', NULL, '2026-07-27', '2026-07-29', 2, 17, 'Bonne réponse.'),
+(7, 34, '2', NULL, '2026-07-27', '2026-07-29', 2, 11, 'Incorrect, la bonne réponse était "Une relation".'),
+(7, 35, 'Elle assure l''intégrité référentielle entre deux tables.', NULL, '2026-07-29', '2026-07-31', 2, 19, 'Excellent.'),
+(7, 36, '1', NULL, '2026-07-29', '2026-07-31', 2, 19, 'Correct.'),
+(7, 37, 'Réduire la redondance des données en découpant les tables.', NULL, '2026-07-31', '2026-08-01', 2, 16, 'Bien résumé.'),
+(7, 38, '2', NULL, '2026-07-31', '2026-08-01', 2, 16, 'Correct.'),
+(7, 39, 'La clause WHERE.', NULL, '2026-08-01', NULL, NULL, NULL, NULL),
+(7, 40, '1', NULL, '2026-08-01', NULL, NULL, NULL, NULL),
+(7, 41, 'L''instruction UPDATE.', NULL, '2026-08-02', NULL, NULL, NULL, NULL),
+(7, 42, '3', NULL, '2026-08-02', NULL, NULL, NULL, NULL),
+
+-- Student 8 (Nabil) — cours 3 — barely started
+(8, 21, 'Le manager fixe les tâches sans consulter l''équipe.', NULL, '2026-08-02', '2026-08-04', 4, 14, 'Bien vu.'),
+(8, 22, '3', NULL, '2026-08-02', '2026-08-04', 4, 14, 'Correct.'),
+(8, 23, 'L''objectif attendu et la date limite.', NULL, '2026-08-15', NULL, NULL, NULL, NULL),
+
+-- Student 9 (Katia) — cours 2 — mixed, includes File Upload
+(9, 9,  'Good morning everyone, let''s get started.', NULL, '2026-07-29', '2026-07-31', 3, 15, 'Bonne formule d''introduction.'),
+(9, 10, '3', NULL, '2026-07-29', '2026-07-31', 3, 7,  'Réponse incorrecte, la bonne était la 1.'),
+(9, 11, 'In my opinion, I think we should...', NULL, '2026-09-05', NULL, NULL, NULL, NULL),
+(9, 12, '1', NULL, '2026-09-05', NULL, NULL, NULL, NULL),
+(9, 51, NULL, 'uploads/submissions/audio-reunion-katia.mp3', '2026-09-06', NULL, NULL, NULL, NULL),
+(9, 52, NULL, 'uploads/submissions/note-synthese-katia.pdf', '2026-09-07', '2026-09-08', 3, 16, 'Bonne synthèse.'),
+
+-- Student 10 (Simon) — cours 3 — very recent, nothing corrected yet
+(10, 21, 'Un manager qui décide seul.', NULL, '2026-09-15', NULL, NULL, NULL, NULL),
+(10, 22, '2', NULL, '2026-09-15', NULL, NULL, NULL, NULL),
+
+-- Student 11 (Yehya) — cours 4 AND cours 1 — barely started on both
+(11, 31, 'Une relation entre deux tables.', NULL, '2026-09-10', NULL, NULL, NULL, NULL),
+(11, 32, '1', NULL, '2026-09-10', NULL, NULL, NULL, NULL),
+(11, 1,  'La balise <head>.', NULL, '2026-09-12', NULL, NULL, NULL, NULL),
+(11, 2,  '2', NULL, '2026-09-12', NULL, NULL, NULL, NULL);
