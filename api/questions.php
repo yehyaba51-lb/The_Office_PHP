@@ -10,19 +10,29 @@
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 
     require_once(__DIR__ . '/../classes/gestion_exercices/ExerciceManager.php');
+    require_once(__DIR__ . '/../classes/authentification/Authentification.php');
     
     $manager = new ExerciceManager();
+    $auth = new Authentification();
 
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit;
-    } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    }
+    
+    if($_SERVER['REQUEST_METHOD'] === 'GET'){
         if(!isset($_GET['id'])){
             http_response_code(400);
             echo json_encode(['error' => 'Id manquante']);
             exit;
         } else {
             if(isset($_GET['allQuestion'])){
+                if(!$auth->verifierRole('Formateur') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
                 $allQuestions = $manager->getQuestionsByExercice($_GET['id']);
 
                 if($allQuestions === false){
@@ -36,6 +46,12 @@
             }
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if(!$auth->verifierRole('Formateur') ){
+            http_response_code(403);
+            echo json_encode(['error' => 'Accès refusé']);
+            exit;
+        }
+
         $data = json_decode(file_get_contents("php://input"), true);
 
         $result = $manager->creerQuestion($data);
@@ -55,6 +71,12 @@
             echo json_encode(['error' => 'Id manquante']);
             exit;
         } else {
+            if(!$auth->verifierRole('Formateur') ){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+
             $data = json_decode(file_get_contents("php://input"), true);
     
             $result = $manager->updateQuestion($_GET['id'], $data);
@@ -74,6 +96,12 @@
             echo json_encode(['error' => 'Id manquante']);
             exit;
         } else {
+            if(!$auth->verifierRole('Formateur') ){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+            
             $result = $manager->supprimerQuestion($_GET['id']);
 
             if($result === false){
