@@ -12,9 +12,11 @@
 
     require_once(__DIR__ . '/../classes/gestion_cours/CoursManager.php');
     require_once(__DIR__ . '/../classes/support/FichierValidateur.php');
+    require_once(__DIR__ . '/../classes/authentification/Authentification.php');
 
     $manager = new CoursManager();
     $validateur = new FichierValidateur();
+    $auth = new Authentification();
 
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
@@ -25,7 +27,7 @@
             echo json_encode(['error' => 'Id cours manquante']);
             exit;
         } else {
-            if(!isset($_GET['id'])){
+            if(!isset($_GET['leconId'])){
                 http_response_code(400);
                 echo json_encode(['error' => 'Id leçon manquante']);
                 exit;
@@ -35,6 +37,12 @@
                     echo json_encode(['error' => 'PDF pas envoyé']);
                     exit;
                 } else {
+                    if(!$auth->verifierRole('Formateur')){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+                    
                     $pdf = $_FILES['pdf'];
                     $pdf_ordre = $_POST['ordre'];
 
@@ -51,7 +59,7 @@
 
                         if($valide === false){
                             http_response_code(400);
-                            echo json_encode(['error' => 'Fichier invalide']);
+                            echo json_encode(['error' => 'Fichier trop grand']);
                             exit;
                         }
 
