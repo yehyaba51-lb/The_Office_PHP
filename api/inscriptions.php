@@ -10,15 +10,26 @@
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 
     require_once(__DIR__ . '/../classes/gestion_cours/CoursManager.php');
+    require_once(__DIR__ . '/../classes/authentification/Authentification.php');
 
     $manager = new CoursManager();
+    $auth = new Authentification();
+
 
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit;
-    } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    }
+    
+    if($_SERVER['REQUEST_METHOD'] === 'GET'){
          if(isset($_GET['id'])){
             if(isset($_GET['formateur'])){
+                if(!$auth->verifierRole('Formateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
                 $inscriptionPerFormateur = $manager->getInscriptionByFormateur($_GET['id']);
 
                 if($inscriptionPerFormateur === false){
@@ -30,6 +41,13 @@
                 http_response_code(200);
                 echo json_encode($inscriptionPerFormateur);
             } else {
+                if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+
                 $inscriptionPerCours = $manager->getInscriptionByCours($_GET['id']);
     
                 if($inscriptionPerCours === false){
@@ -42,6 +60,12 @@
                 echo json_encode($inscriptionPerCours);
             }
         } else {
+            if(!$auth->verifierRole('Administrateur')){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+
             $allInscriptions = $manager->getAllInscriptions();
     
             if($allInscriptions === false){
@@ -54,6 +78,12 @@
             echo json_encode($allInscriptions);
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if(!$auth->verifierRole('Administrateur')){
+            http_response_code(403);
+            echo json_encode(['error' => 'Accès refusé']);
+            exit;
+        }
+
         $data = json_decode(file_get_contents("php://input"), true);
 
         $result = $manager->createInscription($data['etudiant_id'], $data['cours_id']);
@@ -72,6 +102,13 @@
             echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
+            if(!$auth->verifierRole('Administrateur')){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+
+            
             $delete = $manager->supprimerInscription($_GET['id']);
 
             if(!$delete){
