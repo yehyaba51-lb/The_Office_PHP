@@ -6,11 +6,6 @@
         private $contenu_texte;
         private $texte_ordre;
 
-
-        public function afficherContenu(){
-
-        }
-
         public function getTexteId(){
             return $this->texte_id;
         }

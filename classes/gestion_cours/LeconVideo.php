@@ -7,11 +7,6 @@
         private $video_ordre;
         private $duree;
 
-
-        public function afficherContenu(){
-
-        }
-
         public function getVideoId(){
             return $this->video_id;
         }

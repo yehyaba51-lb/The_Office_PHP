@@ -6,9 +6,6 @@
         private $url_pdf;
         private $pdf_ordre;
 
-        public function afficherContenu(){
-
-        }
 
         public function getPdfId(){
             return $this->pdf_id;

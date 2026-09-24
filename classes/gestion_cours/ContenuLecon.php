@@ -3,8 +3,6 @@
         protected $lecon_id;
         protected $cours_id;
 
-        abstract public function afficherContenu();
-
         public function getLeconId(){
             return $this->lecon_id;
         }
