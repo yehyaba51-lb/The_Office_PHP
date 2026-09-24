@@ -95,7 +95,8 @@ If a subfolder is missing on your machine, the backend recreates it on the next 
 
 ## Connecting the frontend
 
-The React app's `.env` needs `VITE_SERVER_URL` pointing at this backend's `api/` folder:
+The React app's `.env` needs `VITE_SERVER_URL` pointing at this backend's `api/` folder and `VITE_UPLOADS_URL` pointing at the the backend's `uploads` folder:
 ```
 VITE_SERVER_URL=http://localhost/The_Office_PHP/backend/api
+VITE_UPLOADS_URL=http://localhost/The_Office_PHP/
 ```
