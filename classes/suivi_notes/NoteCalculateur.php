@@ -150,7 +150,7 @@
             }
 
             foreach ($lecon_rows as $lecon) {
-                $progression_lecon_row = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon['lecon_id']);
+                $progression_lecon_row = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon['id']);
 
                 if($progression_lecon_row && $progression_lecon_row['note'] !== null){
                     $areAllCorrected[] = true;
