@@ -29,12 +29,12 @@
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(!isset($_FILES['fichier'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Image pas envoyé']);
+            echo json_encode(['error' => 'Aucune image envoyée']);
             exit;
         } else {
             if(!isset($_GET['id'])){
                 http_response_code(400);
-                echo json_encode(['error' => 'Id manquante']);
+                echo json_encode(['error' => 'Id manquant']);
                 exit;
             } else {
                 if(!$auth->verifierRole('Formateur')){
@@ -46,16 +46,11 @@
                 $image = $_FILES['fichier'];
                 $cours_id = $_GET['id'];
     
-                if(empty($image)){
-                    http_response_code(400);
-                    echo json_encode(['error' => "Pas d'image uploadé"]);
-                    exit;
-                } else {
                     $valide = $validateur->valider($image, ['image/jpeg', 'image/png'], 5 * 1024 * 1024);
-    
-                    if($valide === false){
+
+                    if(is_array($valide) && isset($valide['error'])){
                         http_response_code(400);
-                        echo json_encode(['error' => 'Fichier invalide']);
+                        echo json_encode($valide);
                         exit;
                     }
     
@@ -73,7 +68,7 @@
                     $deplace = move_uploaded_file($image['tmp_name'], $chemin_final);
     
                     if(!$deplace){
-                         http_response_code(500);
+                        http_response_code(500);
                         echo json_encode(['error' => 'Impossible de sauvegarder le fichier']);
                         exit;
                     }
@@ -84,13 +79,12 @@
 
                     if($result === false){
                         http_response_code(500);
-                        echo json_encode(['error' => "Error uploadé l'image"]);
+                        echo json_encode(['error' => "Erreur lors de l'enregistrement de l'image"]);
                         exit;
                     }
 
                     http_response_code(201);
                     echo json_encode(['url' => $urlRelative]);
-                }
             }
         }
     } else {

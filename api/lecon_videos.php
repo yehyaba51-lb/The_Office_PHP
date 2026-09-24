@@ -24,17 +24,17 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id cours manquante']);
+            echo json_encode(['error' => 'Id cours manquant']);
             exit;
         } else {
             if(!isset($_GET['leconId'])){
                 http_response_code(400);
-                echo json_encode(['error' => 'Id leçon manquante']);
+                echo json_encode(['error' => 'Id leçon manquant']);
                 exit;
             } else {
                 if(!isset($_FILES['video'])){
                     http_response_code(400);
-                    echo json_encode(['error' => 'video pas envoyé']);
+                    echo json_encode(['error' => 'Aucune vidéo envoyée']);
                     exit;
                 } else {
                     if(!$auth->verifierRole('Formateur')){
@@ -47,28 +47,21 @@
                     $video_ordre = $_POST['video_ordre'];
                     $video_duree = $_POST['duree'];
 
-                    if(empty($video)){
+                    if(empty($video_ordre)){
                         http_response_code(400);
-                        echo json_encode(['error' => "Pas de fichier video uploadé"]);
-                        exit;
-                    } else if(empty($video_ordre)){
-                        http_response_code(400);
-                        echo json_encode(['error' => "Pas de video ordre"]);
+                        echo json_encode(['error' => "Numéro d'ordre de la vidéo manquant"]);
                         exit;
                     } else if(empty($video_duree)){
                         http_response_code(400);
-                        echo json_encode(['error' => "Pas de video duree"]);
+                        echo json_encode(['error' => "Durée de la vidéo manquante"]);
                         exit;
                     } else {
                         $valide = $validateur->valider($video, ['video/mp4', 'video/quicktime', 'video/x-m4v'], 500 * 1024 * 1024);
 
 
-                        if($valide === false){
+                        if(is_array($valide) && isset($valide['error'])){
                             http_response_code(400);
-                            echo json_encode([
-                                'error' => 'Fichier invalide',
-                                'mime' => $validateur->getMimeType($video['tmp_name'])
-                            ]);
+                            echo json_encode($valide);
                             exit;
                         }
 
@@ -86,7 +79,7 @@
 
                         if(!$deplace){
                             http_response_code(500);
-                            echo json_encode(['error' => 'Impossible de sauvegarder le fichier']);
+                            echo json_encode(['error' => "Erreur lors de l'enregistrement de la vidéo"]);
                             exit;
                         }
 
@@ -96,7 +89,7 @@
 
                         if($result === false){
                             http_response_code(500);
-                            echo json_encode(['error' => "Error uploadé video"]);
+                            echo json_encode(['error' => "Erreur lors de l'enregistrement de la vidéo"]);
                             exit;
                         }
 

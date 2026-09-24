@@ -24,17 +24,17 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id cours manquante']);
+            echo json_encode(['error' => 'Id cours manquant']);
             exit;
         } else {
             if(!isset($_GET['leconId'])){
                 http_response_code(400);
-                echo json_encode(['error' => 'Id leçon manquante']);
+                echo json_encode(['error' => 'Id leçon manquant']);
                 exit;
             } else {
                 if(!isset($_FILES['pdf'])){
                     http_response_code(400);
-                    echo json_encode(['error' => 'PDF pas envoyé']);
+                    echo json_encode(['error' => 'Aucun PDF envoyé']);
                     exit;
                 } else {
                     if(!$auth->verifierRole('Formateur')){
@@ -46,20 +46,16 @@
                     $pdf = $_FILES['pdf'];
                     $pdf_ordre = $_POST['ordre'];
 
-                    if(empty($pdf)){
+                    if(empty($pdf_ordre)){
                         http_response_code(400);
-                        echo json_encode(['error' => "Pas de fichier PDF uploadé"]);
-                        exit;
-                    } else if(empty($pdf_ordre)){
-                        http_response_code(400);
-                        echo json_encode(['error' => "Pas de PDF ordre"]);
+                        echo json_encode(['error' => "Numéro d'ordre du PDF manquant"]);
                         exit;
                     } else {
                         $valide = $validateur->valider($pdf, ['application/pdf'], 20 * 1024 * 1024);
 
-                        if($valide === false){
+                        if(is_array($valide) && isset($valide['error'])){
                             http_response_code(400);
-                            echo json_encode(['error' => 'Fichier trop grand']);
+                            echo json_encode($valide);
                             exit;
                         }
 
@@ -77,7 +73,7 @@
 
                         if(!$deplace){
                             http_response_code(500);
-                            echo json_encode(['error' => 'Impossible de sauvegarder le fichier']);
+                            echo json_encode(['error' => "Erreur lors de l'enregistrement du PDF"]);
                             exit;
                         }
 
@@ -87,7 +83,7 @@
 
                         if($result === false){
                             http_response_code(500);
-                            echo json_encode(['error' => "Error uploadé PDF"]);
+                            echo json_encode(['error' => "Erreur lors de l'enregistrement du PDF"]);
                             exit;
                         }
 
