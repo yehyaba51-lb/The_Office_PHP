@@ -67,6 +67,10 @@
         }
 
         public function creerQuestion($data){
+            if(empty($data['texte_question']) || strlen(trim($data['texte_question'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_question'])){
+                return ['error' => 'Texte invalide'];
+            }
+
             $stmt = mysqli_prepare($this->conn, "INSERT INTO question(exercice_id, texte_question, question_type) VALUES(?, ?, ?)");
 
             if (!$stmt) {
@@ -84,6 +88,9 @@
         }
 
         public function updateQuestion($id, $data){
+            if(empty($data['texte_question']) || strlen(trim($data['texte_question'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_question'])){
+                return ['error' => 'Texte invalide'];
+            }
             $stmt = mysqli_prepare($this->conn, "UPDATE question SET texte_question = ?, question_type = ? WHERE question_id = ?");
 
             if (!$stmt) {

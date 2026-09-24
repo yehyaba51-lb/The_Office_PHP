@@ -10,7 +10,7 @@
 
         public function valider($file, $types_accepted, $TAILLE_MAX){
             if($file['size'] > $TAILLE_MAX){
-                return false;
+                return ['error' => 'Taille trop grande'];
             }
 
             $mime = $this->getMimeType($file['tmp_name']);
@@ -18,7 +18,7 @@
             
 
             if(!in_array($mime, $types_accepted)){
-                return false;
+                return ['error' => 'MIME type invalide'];
             }
 
             return true;

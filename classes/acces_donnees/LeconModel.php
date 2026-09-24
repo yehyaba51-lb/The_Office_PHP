@@ -99,6 +99,14 @@
         }
 
         public function creerLecon($data){
+            if(empty($data['lecon_titre']) || strlen(trim($data['lecon_titre'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['lecon_titre'])){
+                return ['error' => 'Titre invalide'];
+            }
+
+            if(empty($data['lecon_ordre']) || !is_numeric($data['lecon_ordre']) || $data['lecon_ordre'] <= 0){
+                return ['error' => 'Ordre invalide'];
+            }
+
             $stmt = mysqli_prepare($this->conn, "INSERT INTO lecon(cours_id, lecon_titre, lecon_ordre) VALUES(?, ?, ?)");
 
             if (!$stmt) {

@@ -93,6 +93,10 @@
         }
 
         public function creerChoix($data){
+            if(empty($data['texte_choix']) || strlen(trim($data['texte_choix'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_choix'])){
+                return ['error' => 'Contenu invalide'];
+            }
+            
             $stmt = mysqli_prepare($this->conn, "INSERT INTO choix(question_id, texte_choix, est_correct, ordre) VALUES(?, ?, ?, ?)");
 
             if (!$stmt) {

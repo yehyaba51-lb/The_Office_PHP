@@ -121,7 +121,7 @@
 
         public function changerPassword($id, $data){
             if(empty($data['password']) || !preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $data['password'])){
-                return false;
+                return ['error' => 'Mot de passe invalide'];
             }
             $stmt = mysqli_prepare($this->conn, 
                 "UPDATE utilisateur
@@ -148,19 +148,19 @@
         public function creerUtilisateur($data)
         {
             if(empty($data['prenom']) || strlen(trim($data['prenom'])) < 2 || !preg_match('/^[A-Za-zÀ-ÿ\'\-\s]+$/', $data['prenom'])){
-                return false;
+                return ['error' => 'Prenom invalide'];
             }
 
             if(empty($data['nom']) || strlen(trim($data['nom'])) < 2 || !preg_match('/^[A-Za-zÀ-ÿ\'\-\s]+$/', $data['nom'])){
-                return false;
+                return ['error' => 'Nom invalide'];
             }
 
             if(empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
-                return false;
+                return ['error' => 'Email invalide'];
             };
 
             if(empty($data['role']) || $data['role'] === ""){
-                return false;
+                return ['error' => 'Role invalide'];
             }
 
             $mot_de_passe = $this->genererMotDePasse();
@@ -192,15 +192,15 @@
 
         public function updateUtilisateur($id, $data){
             if(empty($data['prenom']) || strlen(trim($data['prenom'])) < 2 || !preg_match('/^[A-Za-zÀ-ÿ\'\-\s]+$/', $data['prenom'])){
-                return false;
+                return ['error' => 'Prenom invalide'];
             }
 
             if(empty($data['nom']) || strlen(trim($data['nom'])) < 2 || !preg_match('/^[A-Za-zÀ-ÿ\'\-\s]+$/', $data['nom'])){
-                return false;
+                return ['error' => 'Nom invalide'];
             }
 
             if(empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
-                return false;
+                return ['error' => 'Email invalide'];
             };
             $stmt = mysqli_prepare($this->conn, "UPDATE utilisateur SET prenom = ?, nom = ?, email = ? WHERE utilisateur_id  = ?");
 

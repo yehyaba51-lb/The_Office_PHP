@@ -48,7 +48,7 @@
 
         public function creerCategorie($data){
             if(empty($data['categorie_nom']) || strlen(trim($data['categorie_nom'])) < 2){
-                return false;
+                return ['error' => 'Nom invalide'];
             }
 
             $stmt = mysqli_prepare($this->conn, "INSERT INTO categorie(categorie_nom) VALUES(?)");
@@ -70,7 +70,7 @@
 
         public function updateCategorie($id, $data){
             if(empty($data['categorie_nom']) || strlen(trim($data['categorie_nom'])) < 2){
-                return false;
+                return ['error' => 'Nom invalide'];
             }
 
             $stmt = mysqli_prepare($this->conn, "UPDATE categorie SET categorie_nom = ? WHERE categorie_id = ?");

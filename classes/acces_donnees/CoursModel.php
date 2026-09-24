@@ -217,13 +217,13 @@ class CoursModel
     public function creerCours($data)
     {
         if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['cours_titre'])){
-            return false;
+            return ['error' => 'Titre invalide'];
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
-            return false;
+            return ['error' => 'Formateur manquant'];
         }
         if(empty($data['categorie_id']) || $data['categorie_id'] === ""){
-            return false;
+            return ['error' => 'Catégorie manquante'];
         }
 
         $stmt = mysqli_prepare($this->conn, "INSERT INTO cours(cours_titre, formateur_id, categorie_id) VALUES(?, ?, ?)");
@@ -267,13 +267,13 @@ class CoursModel
     public function updateCoursByAdmin($id, $data)
     {
         if(empty($data['cours_titre']) || strlen(trim($data['cours_titre'])) < 5 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['cours_titre'])){
-            return false;
+            return ['error' => 'Titre invalide'];
         }
         if(empty($data['formateur_id']) || $data['formateur_id'] === ""){
-            return false;
+            return ['error' => 'Formateur manquant'];
         }
         if(empty($data['categorie_id']) || $data['categorie_id'] === ""){
-            return false;
+            return ['error' => 'Catégorie manquante'];
         }
 
         $stmt = mysqli_prepare($this->conn, "UPDATE cours SET cours_titre = ?, formateur_id = ?, categorie_id = ? WHERE cours_id = ?");
@@ -287,7 +287,7 @@ class CoursModel
         mysqli_stmt_bind_param($stmt, "siii", $cours_titre, $data['formateur_id'], $data['categorie_id'], $id);
         $execute = mysqli_stmt_execute($stmt);
 
-        if(!$execute){
+        if($execute === false){
             return false;    
         }
 
@@ -296,7 +296,7 @@ class CoursModel
 
     public function updateDescription($cours_id, $data){
         if(!preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-,.!?;()\n]*$/", $data['description'])){
-            return false;
+            return ['error' => 'Description invalide'];
         }
 
         $stmt = mysqli_prepare($this->conn, 

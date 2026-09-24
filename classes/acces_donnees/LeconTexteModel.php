@@ -93,6 +93,10 @@
 
             $texte_order = $row['max_ordre'] === null ? 1 : $row['max_ordre'] + 1;
 
+            if(empty($data['contenu_texte']) || strlen(trim($data['contenu_texte'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['contenu_texte'])){
+                return ['error' => 'Contenu invalide'];
+            }
+
             $stmt = mysqli_prepare($this->conn, "INSERT INTO lecon_texte(lecon_id, cours_id, contenu_texte, texte_order) VALUES(?, ?, ?, ?)");
 
             if ($stmt === false) {
