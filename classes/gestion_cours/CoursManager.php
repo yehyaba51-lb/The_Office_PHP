@@ -191,29 +191,6 @@ class CoursManager
         return $allContent;
     }
 
-    public function getLeconTextesByLecon($lecon_id)
-    {
-        $rows = $this->leconTexteModel->getLeconTextesByLecon($lecon_id);
-        $allLeconTextes = [];
-
-        if($rows === false){
-            return false;
-        }
-
-        foreach ($rows as $row) {
-            $leconTexte = new LeconTexte();
-            $leconTexte->setLeconId($row['lecon_id']);
-            $leconTexte->setCoursId($row['cours_id']);
-            $leconTexte->setTexteId($row['texte_id']);
-            $leconTexte->setContenuTexte($row['contenu_texte']);
-            $leconTexte->setTexteOrdre($row['texte_ordre']);
-
-            $allLeconTextes[] = $leconTexte;
-        }
-        return $allLeconTextes;
-    }
-
-
     public function createLeconTexte($lecon_id, $cours_id, $contenu_texte)
     {
         $data = [
@@ -223,29 +200,6 @@ class CoursManager
         ];
 
         return $this->leconTexteModel->creerLeconTexte($data);
-    }
-
-
-    public function getLeconPdfsByLecon($lecon_id)
-    {
-        $rows = $this->leconPdfModel->getLeconPdfsByLecon($lecon_id);
-        $allLeconPdfs = [];
-
-        if($rows === false){
-            return false;
-        }
-
-        foreach ($rows as $row) {
-            $leconPdf = new LeconPdf();
-            $leconPdf->setLeconId($row['lecon_id']);
-            $leconPdf->setCoursId($row['cours_id']);
-            $leconPdf->setPdfId($row['pdf_id']);
-            $leconPdf->setUrlPdf($row['url_pdf']);
-            $leconPdf->setPdfOrdre($row['pdf_ordre']);
-
-            $allLeconPdfs[] = $leconPdf;
-        }
-        return $allLeconPdfs;
     }
 
 
@@ -265,31 +219,7 @@ class CoursManager
         return $this->coursModel->updateImage($cours_id, $data);
 }
 
-    public function getLeconVideosByLecon($lecon_id)
-    {
-        $rows = $this->leconVideoModel->getLeconVideosByLecon($lecon_id);
-        $allLeconVideos = [];
-
-        if($rows === false){
-            return false;
-        }
-        
-        foreach ($rows as $row) {
-            $leconVideo = new LeconVideo();
-            $leconVideo->setLeconId($row['lecon_id']);
-            $leconVideo->setCoursId($row['cours_id']);
-            $leconVideo->setVideoId($row['video_id']);
-            $leconVideo->setUrlVideo($row['url_video']);
-            $leconVideo->setVideoOrdre($row['video_ordre']);
-            $leconVideo->setDuree($row['duree']);
-
-            $allLeconVideos[] = $leconVideo;
-        }
-
-        return $allLeconVideos;
-    }
-
-
+    
     public function createLeconVideo($lecon_id, $cours_id, $url_video, $video_order, $duree)
     {
         $data = [
