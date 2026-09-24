@@ -62,6 +62,10 @@
 
                     http_response_code(200);
                     echo json_encode($allContent);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Paramètre one ou allContent requis']);
+                    exit;
                 }
             } else {
                 if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
@@ -83,7 +87,7 @@
             }
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
-        if(!$_GET['id']){
+        if(!isset($_GET['id'])){
             http_response_code(400);
             echo json_encode(['error' => 'Id cours manquante']);
             exit;
