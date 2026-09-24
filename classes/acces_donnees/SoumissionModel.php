@@ -246,6 +246,7 @@
             if(!$execute){
                 return false;
             }
+            if(mysqli_stmt_affected_rows($stmt) === 0) return false;
 
             return $execute;
         }
