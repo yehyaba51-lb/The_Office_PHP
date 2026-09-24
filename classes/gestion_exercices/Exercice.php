@@ -45,8 +45,6 @@
             $this->exercice_titre = $exercice_titre;
         }
 
-        public function estDeverrouille(){
-            return $this->manager->estDeverrouille();
-        }
+        
 
     }
