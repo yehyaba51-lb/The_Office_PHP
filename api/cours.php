@@ -79,6 +79,11 @@
             echo json_encode($allCours);
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if(!$auth->verifierRole('Administrateur')){
+            http_response_code(403);
+            echo json_encode(['error' => 'Accès refusé']);
+            exit;
+        }
         $data = json_decode(file_get_contents("php://input"), true);
 
         $result = $manager->creerPlaceholder($data['cours_titre'], $data['formateur_id'], $data['categorie_id']);
@@ -98,6 +103,12 @@
             exit;
         } else {
             if(isset($_GET['description'])){
+                if(!$auth->verifierRole('Formateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
                 $data = json_decode(file_get_contents("php://input"), true);
 
                 $result = $manager->updateDescription($_GET['id'], $data);
@@ -111,6 +122,13 @@
                 http_response_code(200);
                 echo json_encode($result);
             } else {
+                if(!$auth->verifierRole('Administrateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+
                 $data = json_decode(file_get_contents("php://input"), true);
         
                 $result = $manager->updateCoursByAdmin($_GET['id'], $data);
@@ -131,6 +149,12 @@
             echo json_encode(['error' => "Id manquant"]);
             exit;
         } else {
+            if(!$auth->verifierRole('Administrateur')){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+            
             $delete = $manager->supprimerCours($_GET['id']);
 
             if(!$delete){
