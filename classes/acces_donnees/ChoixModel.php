@@ -85,14 +85,14 @@
         }
 
         public function creerChoix($data){
-            $stmt = mysqli_prepare($this->conn, "INSERT INTO choix(question_id, texte_choix, est_correct) VALUES(?, ?, ?)");
+            $stmt = mysqli_prepare($this->conn, "INSERT INTO choix(question_id, texte_choix, est_correct, ordre) VALUES(?, ?, ?, ?)");
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "isi", $data['question_id'], $data['texte_choix'], $data['est_correct']);
+            mysqli_stmt_bind_param($stmt, "isii", $data['question_id'], $data['texte_choix'], $data['est_correct'], $data['ordre']);
             mysqli_stmt_execute($stmt);
 
             return mysqli_insert_id($this->conn);
