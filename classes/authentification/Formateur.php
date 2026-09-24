@@ -10,6 +10,6 @@
         }
 
         public function corrigerExercice($id, $data){
-            return $this->manager->updateSoumission($id, $data);
+            return $this->manager->corrigerSoumission($id, $data);
         }
     }
