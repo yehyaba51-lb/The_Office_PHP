@@ -23,7 +23,7 @@ class CoursModel
                 (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
                 (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id ) AS lecons
             FROM cours AS c
-            INNER JOIN utilisateur AS u
+            LEFT JOIN utilisateur AS u
             ON c.formateur_id = u.utilisateur_id
             WHERE c.cours_id = ?");
 
@@ -94,9 +94,9 @@ class CoursModel
                 (SELECT COUNT(*) FROM inscription AS i WHERE i.cours_id = c.cours_id) AS etudiants,
                 (SELECT COUNT(*) FROM progression AS p WHERE p.cours_id = c.cours_id AND complete_le IS NOT NULL) AS number_of_completion
             FROM cours AS c
-            INNER JOIN categorie AS cat
+            LEFT JOIN categorie AS cat
             ON cat.categorie_id = c.categorie_id
-            INNER JOIN utilisateur AS u
+            LEFT JOIN utilisateur AS u
             ON u.utilisateur_id = c.formateur_id
             WHERE formateur_id = ?"
         );
