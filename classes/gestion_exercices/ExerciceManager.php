@@ -129,11 +129,12 @@
 
             if($data['question_type'] === 'QCM' && !empty($data['choix'])){
 
-                foreach ($data['choix'] as $choix) {
+                foreach ($data['choix'] as $index => $choix) {
                     $choix_row = [
                         'question_id' => $question_id,
                         'texte_choix' => $choix['texte'],
-                        'est_correct' => $choix['correct']
+                        'est_correct' => $choix['correct'],
+                        'ordre' => $index + 1
 
                     ];
                     
