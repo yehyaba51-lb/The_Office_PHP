@@ -150,7 +150,80 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+        public function etudiantExiste($id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT 1 FROM utilisateur WHERE utilisateur_id = ? AND role = 'Etudiant'"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $id);
+
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+            return $row !== null; 
+        }
+
+        public function coursExiste($id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT 1 FROM cours WHERE cours_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $id);
+
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+            return $row !== null;
+        }
+
+        public function dejaInscrit($etudiant_id, $cours_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT 1 FROM inscription WHERE etudiant_id = ? AND cours_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "ii", $etudiant_id, $cours_id);
+
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+            return $row !== null;
+        }
+
         public function creerInscription($data){
+            if(!$this->etudiantExiste($data['etudiant_id'])) return ['error' => 'Étudiant introuvable'];
+            if(!$this->coursExiste($data['cours_id'])) return ['error' => 'Cours introuvable'];
+            if($this->dejaInscrit($data['etudiant_id'], $data['cours_id'])) return ['error' => 'Étudiant déjà inscrit à ce cours'];
+
             $stmt = mysqli_prepare($this->conn, "INSERT INTO inscription(etudiant_id, cours_id, note_finale) VALUES(?, ?, null)");
 
             if (!$stmt) {
