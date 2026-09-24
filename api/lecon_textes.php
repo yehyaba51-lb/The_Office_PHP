@@ -20,7 +20,7 @@
         http_response_code(200);
         exit;
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
-        if(!$_GET['id']){
+        if(!isset($_GET['id'])){
             http_response_code(400);
             echo json_encode(['error' => 'Id cours manquante']);
             exit;
