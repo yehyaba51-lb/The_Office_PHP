@@ -35,14 +35,13 @@
                     i.inscription_id AS id,
                     CONCAT(u.prenom, ' ', u.nom) AS etudiant,
                     DATE(i.inscrit_le) AS inscrit_le,
-                    p.cours_id,
-                    p.derniere_lecon_id AS current,
+                    (SELECT COUNT(*) FROM progression_lecon AS pl
+                    WHERE pl.cours_id = i.cours_id
+                        AND pl.etudiant_id = i.etudiant_id
+                        AND statut = 'terminee') AS current,
                     i.note_finale,
-                    (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = p.cours_id ) AS total
+                    (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = i.cours_id ) AS total
                 FROM inscription AS i
-                LEFT JOIN progression AS p
-                ON i.etudiant_id = p.etudiant_id
-                AND i.cours_id = p.cours_id
                 INNER JOIN utilisateur AS u
                 ON i.etudiant_id = u.utilisateur_id
                 WHERE i.cours_id = ?");
