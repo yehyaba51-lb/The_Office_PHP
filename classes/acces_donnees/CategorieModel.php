@@ -18,7 +18,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -55,7 +59,11 @@
             }
             $categorie_nom = strtolower($data['categorie_nom']);
             mysqli_stmt_bind_param($stmt, "s", $categorie_nom);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }
@@ -74,7 +82,13 @@
 
             $categorie_nom = strtolower($data['categorie_nom']);
             mysqli_stmt_bind_param($stmt, "si", $categorie_nom, $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+            
+            return $execute;
         }
 
         public function supprimerCategorie($id){
@@ -86,7 +100,14 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+            
+            return $execute;
+        
         }
 
     }

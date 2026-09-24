@@ -19,7 +19,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -41,7 +45,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ii", $lecon_id, $cours_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 

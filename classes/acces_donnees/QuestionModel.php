@@ -18,7 +18,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -71,7 +75,10 @@
             }
 
             mysqli_stmt_bind_param($stmt, "iss", $data['exercice_id'], $data['texte_question'], $data['question_type']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+            if($execute === false){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }
@@ -85,7 +92,12 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ssi", $data['texte_question'], $data['question_type'], $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
         }
 
         public function supprimerQuestion($id){
@@ -97,6 +109,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
         }
     }

@@ -19,7 +19,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -41,7 +45,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ii", $lecon_id, $cours_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -70,7 +78,11 @@
             }
             
             mysqli_stmt_bind_param($stmt, "iisid", $data['lecon_id'], $data['cours_id'], $data['url_video'], $data['video_order'], $data['duree']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }

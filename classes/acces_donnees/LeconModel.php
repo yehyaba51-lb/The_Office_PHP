@@ -18,7 +18,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ii", $lecon_id ,$cours_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -84,7 +88,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ii", $cours_id, $lecon_order);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
             return mysqli_fetch_assoc($result);
@@ -119,7 +127,13 @@
             
             $lecon_titre = strtolower($data['lecon_titre']);
             mysqli_stmt_bind_param($stmt, "sii", $lecon_titre, $data['lecon_ordre'], $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
         }
 
         public function supprimerLecon($id){
@@ -131,7 +145,13 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
         }
 
     }

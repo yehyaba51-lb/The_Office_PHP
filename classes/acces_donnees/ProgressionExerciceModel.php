@@ -21,7 +21,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -54,7 +58,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "ii", $etudiant_id, $exercice_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -73,7 +81,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "iissd", $data['etudiant_id'], $data['exercice_id'], $data['complete_le'], $data['statut'], $data['note']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }
@@ -88,6 +100,11 @@
                     AND exercice_id = ?"
                 );
 
+                if (!$stmt) {
+                    error_log('Prepare failed: ' . mysqli_error($this->conn));
+                    return false;
+                }
+
                 mysqli_stmt_bind_param($stmt, "dii", $data['note'], $data['etudiant_id'], $data['exercice_id']);
 
             } else {
@@ -98,15 +115,21 @@
                     AND exercice_id = ?"
                 );
 
+                if (!$stmt) {
+                    error_log('Prepare failed: ' . mysqli_error($this->conn));
+                    return false;
+                }
+                
                 mysqli_stmt_bind_param($stmt, "sii", $data['statut'], $data['etudiant_id'], $data['exercice_id']);
 
             }
 
-            if (!$stmt) {
-                error_log('Prepare failed: ' . mysqli_error($this->conn));
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
                 return false;
             }
 
-            return mysqli_stmt_execute($stmt);
+            return $execute;
         }
     }

@@ -19,7 +19,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -52,7 +56,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $question_id);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             $result = mysqli_stmt_get_result($stmt);
 
@@ -93,7 +101,11 @@
             }
 
             mysqli_stmt_bind_param($stmt, "isii", $data['question_id'], $data['texte_choix'], $data['est_correct'], $data['ordre']);
-            mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
 
             return mysqli_insert_id($this->conn);
         }
@@ -107,7 +119,13 @@
             }
 
             mysqli_stmt_bind_param($stmt, "sii", $data['texte_choix'], $data['est_correct'], $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
         }
 
         public function supprimerChoix($id){
@@ -119,6 +137,12 @@
             }
 
             mysqli_stmt_bind_param($stmt, "i", $id);
-            return mysqli_stmt_execute($stmt);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
         }
     }
