@@ -4,17 +4,25 @@ Backend API for The Office e-learning platform. Plain PHP, no framework — talk
 
 ## Folder structure
 
-This repo's contents need to end up inside a `backend/` folder, sitting alongside a `React` frontend, inside your Apache `htdocs`:
+Clone this repo directly into `htdocs`. It contains everything the backend needs, plus the `uploads` folder:
 
 ```
-C:\xampp\htdocs\The_Office_PHP\
-├── backend\        ← this repo goes here
-│   ├── api\
-│   ├── classes\
-│   ├── config\
-│   └── ...
-└── (React frontend, cloned separately, lives outside htdocs)
+C:\xampp\htdocs
+└── The_Office_PHP
+    ├── backend
+    │   ├── api
+    │   ├── classes
+    │   ├── config
+    │   ├── composer.json
+    │   └── ...
+    └── uploads
+        ├── pdfs
+        ├── soumissions
+        ├── thumbnails
+        └── videos
 ```
+
+The React frontend is cloned separately and lives outside `htdocs`.
 
 ## Setup, from scratch
 
@@ -39,42 +47,51 @@ Composer needs it to install packages.
 
 ### 4. Clone this repo into the right spot
 ```
-cd C:\xampp\htdocs\The_Office_PHP
-git clone https://github.com/yehyaba51-lb/backend.git backend
+cd C:\xampp\htdocs
+git clone https://github.com/yehyaba51-lb/The_Office_PHP.git The_Office_PHP
 ```
 
 ### 5. Install PHP dependencies
 `vendor/` isn't included in this repo (regenerated from `composer.json`/`composer.lock`, same reason `node_modules` isn't committed in JS projects). Run as **administrator** if you hit permission errors:
 ```
-cd backend
+cd The_Office_PHP/backend
 composer install
 ```
 
 ### 6. Create your `.env` file
-Also not included (holds real credentials). Copy `.env.example` to `.env` in the `backend/` folder, then fill in:
+Also not included (holds real credentials). Copy `backend/.env.example` to `backend/.env`, then fill in:
 ```
 DB_HOST=localhost
-DB_NAME=e_learning
+DB_NAME=the_office_database
 DB_USER=root
 DB_PASS=
+
+FRONTEND_URL=http://localhost:3000
 ```
 
 ### 7. Create the database
 1. Open `http://localhost/phpmyadmin`
-2. Create a new database named `e_learning`
-3. Run the table-creation SQL script (in this repo) against it
-4. Run the seed data script if you want sample data to test with
+2. Create a new database named `the_office_database`
+3. Run `backend/SQL Script.sql` against it — this creates the tables
+4. Run `backend/SQL Seed.sql` if you want sample data to test with
 
 ### 8. Test it
 Open `http://localhost/The_Office_PHP/backend/api/cours.php` in your browser. You should see JSON, not an error.
+
+## Uploads folder
+
+`uploads/` holds files written at runtime — images uploaded by formateurs, PDFs, videos, student submissions. The folder structure is committed (via `.gitkeep` files), but the files themselves are gitignored.
+
+If a subfolder is missing on your machine, the backend recreates it on the next upload.
 
 ## What's NOT in this repo, and why
 
 | Missing | Why | How to get it |
 |---|---|---|
-| `vendor/` | Regenerated from `composer.lock`, not meant to be committed | `composer install` |
-| `.env` | Holds real database credentials | Copy `.env.example`, fill in your own values |
+| `backend/vendor/` | Regenerated from `composer.lock`, not meant to be committed | `composer install` |
+| `backend/.env` | Holds real database credentials | Copy `.env.example`, fill in your own values |
 | The database itself | MySQL data doesn't travel with git | Run the SQL scripts in phpMyAdmin |
+| Uploaded files | Runtime content, not source code | Created as users upload |
 
 ## Connecting the frontend
 
