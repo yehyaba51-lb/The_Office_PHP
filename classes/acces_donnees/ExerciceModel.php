@@ -103,8 +103,7 @@
             mysqli_stmt_bind_param($stmt, "iis", $data['cours_id'], $data['lecon_id'], $exercice_titre);
             $success = mysqli_stmt_execute($stmt);
             if(!$success){
-                echo json_encode(['error' => mysqli_stmt_error($stmt)]);
-                exit;
+                return false;
             }
             return mysqli_insert_id($this->conn);
         }
