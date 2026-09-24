@@ -60,7 +60,7 @@
     
                 if($coursById === false){
                     http_response_code(500);
-                    echo json_encode(['error' => "Erreur seveur"]);
+                    echo json_encode(['error' => "Erreur serveur"]);
                     exit;
                 }
 
