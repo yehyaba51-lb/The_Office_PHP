@@ -75,7 +75,7 @@
             $stmt = mysqli_prepare($this->conn, 
                 "SELECT *
                 FROM lecon
-                WHERE cours_id = ? AND lecon_order = ?"
+                WHERE cours_id = ? AND lecon_ordre = ?"
             );
 
             if (!$stmt) {
