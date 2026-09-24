@@ -2,6 +2,7 @@
     abstract class ContenuLecon {
         protected $lecon_id;
         protected $cours_id;
+        protected $ordre;
 
         abstract public function afficherContenu();
 
