@@ -33,16 +33,13 @@
         public function calculerTauxCompletion($formateur_id){
             $stmt = mysqli_prepare($this->conn, 
                 "SELECT
-                    (SELECT COUNT(*)
-                    FROM progression_lecon AS pl
-                    WHERE pl.etudiant_id = p.etudiant_id
-                    AND pl.cours_id = p.cours_id
-                    AND pl.statut = 'terminee') AS current,
-                    (SELECT COUNT(*)
-                    FROM lecon AS l
-                    WHERE l.cours_id = p.cours_id) AS total
-                FROM progression AS p
-                INNER JOIN cours AS c ON p.cours_id = c.cours_id
+                    COUNT(*) AS total,
+                    SUM(p.complete_le IS NOT NULL) AS termines
+                FROM inscription AS i
+                INNER JOIN cours AS c ON i.cours_id = c.cours_id
+                LEFT JOIN progression AS p
+                    ON p.etudiant_id = i.etudiant_id
+                    AND p.cours_id = i.cours_id
                 WHERE c.formateur_id = ?"
             );
 
@@ -59,7 +56,7 @@
             }
 
             $result = mysqli_stmt_get_result($stmt);
-            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+            return mysqli_fetch_assoc($result);
 
         }
 
