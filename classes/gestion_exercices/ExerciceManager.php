@@ -137,8 +137,13 @@
                     ];
                     
                     $result = $this->choixModel->creerChoix($choix_row);
+
                     if($result === false){
                         return false;
+                    }
+
+                    if(is_array($result) && isset($result['error'])){
+                        return $result;
                     }
                 }
             }
@@ -170,6 +175,10 @@
                     $result = $this->choixModel->updateChoix($choix['choix_id'], $choix_row);
                     if($result === false){
                         return false;
+                    }
+                    
+                    if(is_array($result) && isset($result['error'])){
+                        return $result;
                     }
                 }
             }
