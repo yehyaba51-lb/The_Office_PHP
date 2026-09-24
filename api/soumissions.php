@@ -57,7 +57,11 @@
                 http_response_code(200);
                 echo json_encode($soumissionsByFormateur);
             }
-        } 
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Id manquante']);
+            exit;
+        }
     } else if($_SERVER['REQUEST_METHOD'] === 'PUT'){
          if(!isset($_GET['id'])){
             http_response_code(400);
@@ -72,7 +76,10 @@
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $result = $manager->corrigerSoumission($_GET['id'], $data['corrige_par'], $data['note'], $data['commentaire']);
+            $user = $auth->verifierSession();
+            $formateur_id = $user['utilisateur_id'];
+            
+            $result = $manager->corrigerSoumission($_GET['id'], $formateur_id, $data['note'], $data['commentaire']);
             
             if(!$result){
                 http_response_code(400);
