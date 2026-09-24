@@ -34,7 +34,7 @@
 
                 if($inscriptionPerFormateur === false){
                     http_response_code(500);
-                    echo json_encode(['error' => 'Erreur lors de la récupération']);
+                    echo json_encode(['error' => 'Erreur serveur']);
                     exit;
                 }
 
@@ -47,12 +47,11 @@
                     exit;
                 }
 
-
                 $inscriptionPerCours = $manager->getInscriptionByCours($_GET['id']);
     
                 if($inscriptionPerCours === false){
                     http_response_code(500);
-                    echo json_encode(['error' => 'Impossible de récupérer les cours']);
+                    echo json_encode(['error' => 'Erreur serveur']);
                     exit;
                 }
     
@@ -70,7 +69,7 @@
     
             if($allInscriptions === false){
                 http_response_code(500);
-                echo json_encode(['error' => 'Impossible de récupérer les inscriptions']);
+                echo json_encode(['error' => 'Erreur serveur']);
                 exit;
             }
     
@@ -88,9 +87,15 @@
 
         $result = $manager->createInscription($data['etudiant_id'], $data['cours_id']);
 
-        if(!$result){
+        if($result === false){
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur']);
+            exit;
+        }
+
+        if(is_array($result) && isset($result['error'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Inscription ajouté invalide']);
+            echo json_encode($result);
             exit;
         }
 
@@ -108,10 +113,9 @@
                 exit;
             }
 
-            
             $delete = $manager->supprimerInscription($_GET['id']);
 
-            if(!$delete){
+            if($delete === false){
                 http_response_code(400);
                 echo json_encode(['error' => "Impossible de supprimer l'inscription"]);
                 exit;

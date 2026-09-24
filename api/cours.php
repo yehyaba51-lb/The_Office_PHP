@@ -31,8 +31,8 @@
                 $statistics = $manager->getStatistiquesFormateur($_GET['id']);
 
                 if($statistics === false){
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Impossible de récupérer les informations']);
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
                     exit;
                 }
 
@@ -59,8 +59,14 @@
                 $coursById = $manager->getCours($_GET['id']);
     
                 if($coursById === false){
-                    http_response_code(400);
-                    echo json_encode(['error' => "Cours introuvable"]);
+                    http_response_code(500);
+                    echo json_encode(['error' => "Erreur seveur"]);
+                    exit;
+                }
+
+                if($coursById === null){
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Cours introuvable']);
                     exit;
                 }
     
@@ -88,9 +94,15 @@
 
         $result = $manager->creerPlaceholder($data['cours_titre'], $data['formateur_id'], $data['categorie_id']);
         
-        if(!$result){
+        if($result === false){
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur']);
+            exit;
+        }
+
+        if(is_array($result) && isset($result['error'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Cours ajouté invalide']);
+            echo json_encode($result);
             exit;
         }
 
@@ -114,8 +126,14 @@
                 $result = $manager->updateDescription($_GET['id'], $data);
 
                 if($result === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if(is_array($result) && isset($result['error'])){
                     http_response_code(400);
-                    echo json_encode(['error' => 'Impossible de modifier la description']);
+                    echo json_encode($result);
                     exit;
                 }
 
@@ -133,9 +151,15 @@
         
                 $result = $manager->updateCoursByAdmin($_GET['id'], $data);
                 
-                if(!$result){
+                if($result === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if(is_array($result) && isset($result['error'])){
                     http_response_code(400);
-                    echo json_encode(['error' => 'Cours modifié invalide']);
+                    echo json_encode($result);
                     exit;
                 }
         
@@ -157,7 +181,7 @@
             
             $delete = $manager->supprimerCours($_GET['id']);
 
-            if(!$delete){
+            if($delete === false){
                 http_response_code(400);
                 echo json_encode(['error' => "Impossible de supprimer le cours"]);
                 exit;

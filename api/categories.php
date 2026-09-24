@@ -32,7 +32,7 @@
 
         if($allCategories === false){
             http_response_code(500);
-            echo json_encode(['error' => 'Impossible de récupérer les categories']);
+            echo json_encode(['error' => 'Erreur serveur']);
             exit;
         }
 
@@ -44,8 +44,14 @@
         $id = $manager->ajouterCategorie($data['categorie_nom']);
 
         if($id === false){
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur']);
+            exit;
+        }
+
+        if(is_array($id) && isset($id['error'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Nom de catégorie invalide']);
+            echo json_encode($id);
             exit;
         }
 
@@ -62,8 +68,14 @@
             $update = $manager->updateCategorie($_GET['id'], $data['categorie_nom']);
 
             if($update === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            if(is_array($update) && isset($update['error'])){
                 http_response_code(400);
-                echo json_encode(['error' => 'Impossible de modifier la categorie']);
+                echo json_encode($update);
                 exit;
             }
 

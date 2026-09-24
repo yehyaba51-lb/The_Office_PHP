@@ -81,7 +81,7 @@
             
             $result = $manager->corrigerSoumission($_GET['id'], $formateur_id, $data['note'], $data['commentaire']);
             
-            if(!$result){
+            if($result === false){
                 http_response_code(400);
                 echo json_encode(['error' => 'Impossible de modifier la soumission']);
                 exit;

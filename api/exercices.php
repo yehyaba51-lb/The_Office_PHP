@@ -37,7 +37,7 @@
 
             if($exercice_rows === false){
                 http_response_code(500);
-                echo json_encode(['error' => 'Impossible de récupérer les exercices']);
+                echo json_encode(['error' => 'Erreur serveur']);
                 exit;
             }
 
@@ -63,11 +63,17 @@
 
                 $data = json_decode(file_get_contents("php://input"), true);
         
-                $result = $manager->creerPlaceholder($data['leconId'], $data['coursId'], $data['exercice_titre']);
+                $result = $manager->creerPlaceholder($_GET['leconId'], $_GET['coursId'], $data['exercice_titre']);
         
-                if(!$result){
+                if($result === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if(is_array($result) && isset($result['error'])){
                     http_response_code(400);
-                    echo json_encode(['error' => 'Exercice ajouté invalide']);
+                    echo json_encode($result);
                     exit;
                 }
         

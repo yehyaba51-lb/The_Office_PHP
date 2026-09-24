@@ -23,7 +23,7 @@
     if($_SERVER['REQUEST_METHOD'] === 'GET'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id manquante']);
+            echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
             if(isset($_GET['allQuestion'])){
@@ -37,7 +37,7 @@
 
                 if($allQuestions === false){
                     http_response_code(500);
-                    echo json_encode(['error' => 'Impossible de récupérer les questions']);
+                    echo json_encode(['error' => 'Erreur serveur']);
                     exit;
                 }
 
@@ -58,7 +58,13 @@
 
         if($result === false){
             http_response_code(500);
-            echo json_encode(['error' => 'Impossible de crée la question']);
+            echo json_encode(['error' => 'Erreur serveur']);
+            exit;
+        }
+
+        if(is_array($result) && isset($result['error'])){
+            http_response_code(400);
+            echo json_encode($result);
             exit;
         }
         
@@ -68,7 +74,7 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'PUT'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id manquante']);
+            echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
             if(!$auth->verifierRole('Formateur') ){
@@ -83,9 +89,15 @@
     
             if($result === false){
                 http_response_code(500);
-                echo json_encode(['error' => 'Impossible de modifier la question']);
+                echo json_encode(['error' => 'Erreur serveur']);
                 exit;
             }
+
+            if(is_array($result) && isset($result['error'])){
+            http_response_code(400);
+            echo json_encode($result);
+            exit;
+        }
             
             http_response_code(200);
             echo json_encode($result);
@@ -93,7 +105,7 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id manquante']);
+            echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
             if(!$auth->verifierRole('Formateur') ){

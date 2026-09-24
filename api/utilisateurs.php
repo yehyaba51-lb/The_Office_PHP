@@ -77,9 +77,15 @@
         
         $result = $manager->creerUtilisateur($data);
 
-        if(!$result){
+        if($result === false){
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur']);
+            exit;
+        }
+
+        if(is_array($result) && isset($result['error'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Utilisateur ajouté invalide']);
+            echo json_encode($result);
             exit;
         }
 
@@ -101,9 +107,9 @@
 
             $result = $manager->reinitialiserMotDePasse($_GET['id']);
 
-            if(!$result){
-                http_response_code(400);
-                echo json_encode(['error' => 'Impossible de réinitialiser le mot de passe']);
+            if($result === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
                 exit;
             }
 
@@ -120,17 +126,21 @@
             
             $update = $manager->updateUtilisateur($_GET['id'], $data);
 
-            if(!$update){
+            if($update === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            if(is_array($update) && isset($update['error'])){
                 http_response_code(400);
-                echo json_encode(['error' => "Impossible de modifier l'utilisateur"]);
+                echo json_encode($update);
                 exit;
             }
             
             http_response_code(200);
             echo json_encode($update);
         }
-
-
     } else if($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         if(!isset($_GET['id'])){
             http_response_code(400);
@@ -145,7 +155,7 @@
             
             $delete = $manager->supprimerUtilisateur($_GET['id']);
 
-            if(!$delete){
+            if($delete === false){
                 http_response_code(400);
                 echo json_encode(['error' => "Impossible de supprimer l'utilisateur"]);
                 exit;

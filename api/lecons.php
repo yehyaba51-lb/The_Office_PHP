@@ -56,7 +56,7 @@
 
                     if($allContent === false){
                         http_response_code(500);
-                        echo json_encode(['error' => 'Impossible de récupérer tous contenues']);
+                        echo json_encode(['error' => 'Erreur serveur']);
                         exit;
                     }
 
@@ -78,7 +78,7 @@
     
                 if($allLeconsByCours === false){
                     http_response_code(500);
-                    echo json_encode(['error' => 'Id manquante']);
+                    echo json_encode(['error' => 'Erreur serveur']);
                     exit;
                 }
     
@@ -89,7 +89,7 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id cours manquante']);
+            echo json_encode(['error' => 'Id cours manquant']);
             exit;
         } else {
             if(!$auth->verifierRole('Formateur')){
@@ -103,8 +103,14 @@
             $id = $manager->ajouterLecon($_GET['id'], $data['titre'], $data['ordre']);
 
             if($id === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            if(is_array($id) && isset($id['error'])){
                 http_response_code(400);
-                echo json_encode(['error' => 'Leçon ajouté invalide']);
+                echo json_encode($id);
                 exit;
             }
 
