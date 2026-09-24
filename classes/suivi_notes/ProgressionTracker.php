@@ -66,7 +66,7 @@
                     $data = [
                         'etudiant_id' => $etudiant_id,
                         'cours_id' => $cours_id,
-                        'lecon_id' => $lecon['lecon_id'],
+                        'lecon_id' => $lecon['id'],
                         'complete_le' => null,
                         'statut' => 'en_cours'
                     ];
@@ -93,9 +93,9 @@
             }
 
             foreach ($lecons_rows as $lecon) {
-                $exercices_rows = $this->exerciceModel->getExercicesByLecon($lecon['lecon_id'], $cours_id);
+                $exercices_rows = $this->exerciceModel->getExercicesByLecon($lecon['id'], $cours_id);
 
-                foreach ($exercice_rows as $exercice) {
+                foreach ($exercices_rows as $exercice) {
                     if($lecon['lecon_ordre'] === 1){
                         $data = [
                             'etudiant_id' => $etudiant_id,
@@ -131,7 +131,7 @@
             }
 
             foreach ($lecons_rows as $lecon) {
-                $exercices_rows = $this->exerciceModel->getExercicesByLecon($lecon['lecon_id'], $cours_id);
+                $exercices_rows = $this->exerciceModel->getExercicesByLecon($lecon['id'], $cours_id);
                 $exercice_avec_statut = [];
 
                 foreach ($exercices_rows as $exercice) {
@@ -162,7 +162,7 @@
             ];
             $this->progressionLeconModel->updateProgressionLecon($data_terminee);
 
-            $lecon = $this->leconModel->getLecon($lecon_id);
+            $lecon = $this->leconModel->getLecon($lecon_id, $cours_id);
             if(!$lecon){
                 return false;
             }
