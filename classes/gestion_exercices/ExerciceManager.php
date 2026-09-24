@@ -37,8 +37,6 @@
             return $this->exerciceModel->creerExercice($data);
         }
 
-        public function estDeverrouille(){}
-
 
         public function getExercice($id){
             $row = $this->exerciceModel->getExercice($id);
