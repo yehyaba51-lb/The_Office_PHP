@@ -22,12 +22,12 @@
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(!isset($_GET['id'])){
             http_response_code(400);
-            echo json_encode(['error' => 'Id cours manquante']);
+            echo json_encode(['error' => 'Id cours manquant']);
             exit;
         } else {
             if(!isset($_GET['leconId'])){
                 http_response_code(400);
-                echo json_encode(['error' => 'Id leçon manquante']);
+                echo json_encode(['error' => 'Id leçon manquant']);
                 exit;
             } else {
                 if(!$auth->verifierRole('Formateur')){
@@ -38,11 +38,23 @@
 
                 $data = json_decode(file_get_contents("php://input"), true);
 
+                if(!isset($data['contenu'])){
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Contenu manquant']);
+                    exit;
+                }
+
                 $success = $manager->createLeconTexte($_GET['leconId'], $_GET['id'], $data['contenu']);
 
                 if($success === false){
                     http_response_code(500);
-                    echo json_encode(['error' => 'Erreu en ajoutant le cotenu']);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if(is_array($success) && isset($success['error'])){
+                    http_response_code(400);
+                    echo json_encode($success);
                     exit;
                 }
 
