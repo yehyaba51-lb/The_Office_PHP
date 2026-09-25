@@ -257,4 +257,31 @@
 
             return $execute;
         }
+
+        public function getNewInscriptions($etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT
+                    c.cours_titre,
+                    DATE(i.inscrit_le) AS inscrit_le
+                FROM inscription AS i
+                INNER JOIN cours AS c
+                ON c.cours_id = i.cours_id
+                WHERE i.etudiant_id = ?"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
     }
