@@ -237,25 +237,8 @@ class CoursManager
     public function getCoursByEtudiant($etudiant_id)
     {
         $rows = $this->coursModel->getCoursByEtudiant($etudiant_id);
-        $allCours = [];
-
-        if($rows === false){
-            return false;
-        }
-
-        foreach ($rows as $row) {
-            $cours = new Cours();
-            $cours->setCoursId($row['cours_id']);
-            $cours->setTitre($row['cours_titre']);
-            $cours->setDescription($row['description']);
-            $cours->setFormateurId($row['formateur_id']);
-            $cours->setCategorieId($row['categorie_id']);
-            $cours->setCreeLe($row['cree_le']);
-            $cours->setUrlImage($row['url_image']);
-
-            $allCours[] = $cours;
-        }
-        return $allCours;
+        
+        return $rows;
     }
 
 
