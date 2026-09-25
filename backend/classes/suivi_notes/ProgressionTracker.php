@@ -122,6 +122,10 @@
             return true;
         }
 
+        public function getCoursTermine($etudiant_id){
+            return $this->progressionModel->getCoursTermine($etudiant_id);
+        }
+
 
         public function getExercicesAvecStatut($etudiant_id, $cours_id){
             $lecons_rows = $this->leconModel->getLeconsByCours($cours_id);
