@@ -56,6 +56,40 @@
 
                 http_response_code(200);
                 echo json_encode($SoumissionsCorrige);
+            } else if(isset($_GET['notes'])){
+                if(!$auth->verifierRole('Etudiant') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $etudiantNotes = $manager->getNotes($_GET['id']);
+
+                if($etudiantNotes === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($etudiantNotes);
+            } else if(isset($_GET['singleSoumission'])){
+                if(!$auth->verifierRole('Etudiant') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $singleSoumission = $manager->getSoumission($_GET['id']);
+
+                if($singleSoumission === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($singleSoumission);
             } else {
                 if(!$auth->verifierRole('Formateur') ){
                     http_response_code(403);
