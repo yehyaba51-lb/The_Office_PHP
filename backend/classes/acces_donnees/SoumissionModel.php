@@ -221,6 +221,35 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+        public function getSoumissionsCorrige($etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT
+                    q.texte_question,
+                    s.note,
+                    s.corrige_le
+                FROM soumission AS s
+                INNER JOIN question AS q
+                ON q.question_id = s.question_id
+                WHERE s.etudiant_id = ?
+                AND s.corrige_le IS NOT NULL"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
         public function corrigerSoumission($id, $data){
             if($data['note'] !== null && $data['note'] !== '' && (!is_numeric($data['note']) || $data['note'] < 0 || $data['note'] > 20)){
                 return false;
