@@ -136,9 +136,9 @@ class CoursModel
             FROM cours AS c 
             INNER JOIN inscription AS i
             ON c.cours_id = i.cours_id
-            INNER JOIN utilisateur AS u
+            LEFT JOIN utilisateur AS u
             ON c.formateur_id = u.utilisateur_id
-            INNER JOIN categorie AS cat
+            LEFT JOIN categorie AS cat
             ON c.categorie_id = cat.categorie_id
             WHERE i.etudiant_id = ?"
         );
