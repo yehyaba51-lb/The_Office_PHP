@@ -11,7 +11,24 @@
 
         // soumission table
         public function getSoumission($id){
-            $stmt = mysqli_prepare($this->conn, "SELECT * FROM soumission WHERE soumission_id = ?");
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT 
+                    c.cours_titre AS cours,
+                    e.exercice_titre AS exercice,
+                    q.texte_question AS question,
+                    s.note,
+                    s.soumis_le,
+                    s.corrige_le,
+                    s.commentaire
+                FROM soumission AS s
+                INNER JOIN question AS q
+                ON s.question_id = q.question_id
+                INNER JOIN exercice AS e
+                ON q.exercice_id = e.exercice_id
+                INNER JOIN cours AS c
+                ON e.cours_id = c.cours_id
+                WHERE soumission_id = ?"
+            );
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
@@ -307,5 +324,38 @@
             }
 
             return $execute;
+        }
+
+        public function getNotes($etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT
+                    s.soumission_id AS id,
+                    e.exercice_titre AS exercice,
+                    q.texte_question AS texte_question,
+                    s.soumis_le,
+                    s.note
+                FROM soumission AS s
+                INNER JOIN question AS q
+                ON s.question_id = q.question_id
+                INNER JOIN exercice AS e
+                ON q.exercice_id = e.exercice_id
+                WHERE s.etudiant_id = ?"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
+
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
     }
