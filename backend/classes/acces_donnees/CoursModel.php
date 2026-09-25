@@ -126,13 +126,20 @@ class CoursModel
                 c.cours_id,
                 c.cours_titre,
                 c.description,
-                c.formateur_id,
-                c.categorie_id,
-                c.cree_le,
-                c.url_image
+                CONCAT(u.prenom, ' ', u.nom) AS formateur,
+                cat.categorie_nom AS categorie_nom,
+                DATE(c.cree_le) AS cree_le,
+                c.url_image,
+                (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id) AS lecons,
+                (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
+                (SELECT COUNT(*) FROM progression_lecon AS pl WHERE pl.cours_id = c.cours_id AND pl.etudiant_id = ? AND statut = 'terminee') AS number_of_completion
             FROM cours AS c 
             INNER JOIN inscription AS i
             ON c.cours_id = i.cours_id
+            INNER JOIN utilisateur AS u
+            ON c.formateur_id = u.utilisateur_id
+            INNER JOIN categorie AS cat
+            ON c.categorie_id = cat.categorie_id
             WHERE i.etudiant_id = ?"
         );
 
@@ -141,7 +148,7 @@ class CoursModel
             return false;
         }
 
-        mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
+        mysqli_stmt_bind_param($stmt, "ii", $etudiant_id, $etudiant_id);
         
         $execute = mysqli_stmt_execute($stmt);
             
