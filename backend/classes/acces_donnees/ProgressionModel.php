@@ -98,14 +98,16 @@
         }
 
         public function creerProgression($data){
-            $stmt = mysqli_prepare($this->conn, "INSERT INTO progression(etudiant_id, cours_id, complete_le, derniere_lecon_id, modifie_le) VALUES(?, ?, ?, ?, ?)");
+            $stmt = mysqli_prepare($this->conn,
+                "INSERT INTO progression(etudiant_id, cours_id)
+                VALUES(?, ?)");
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iisis", $data['etudiant_id'], $data['cours_id'], $data['complete_le'], $data['derniere_lecon_id'], $data['modifie_le']);
+            mysqli_stmt_bind_param($stmt, "ii", $data['etudiant_id'], $data['cours_id']);
             $execute = mysqli_stmt_execute($stmt);
 
             if(!$execute){
@@ -168,5 +170,30 @@
             }
 
             return $execute;
+        }
+
+        public function getStatistiquesEtudiant($etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT
+                    SUM(complete_le IS NULL) as en_cours,
+                    SUM(complete_le IS NOT NULL) as terminee
+                FROM progression
+                WHERE etudiant_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . $this->conn);
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_assoc($result);
         }
     }
