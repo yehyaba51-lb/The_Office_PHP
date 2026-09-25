@@ -55,6 +55,23 @@
 
                 http_response_code(200);
                 echo json_encode($coursByFormateur);
+            } else if(isset($_GET['allCoursEtudiant'])){
+                if(!$auth->verifierRole('Etudiant')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $coursByEtudiant = $manager->getCoursByEtudiant($_GET['id']);
+
+                if($coursByEtudiant === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($coursByEtudiant);
             } else {
                 $coursById = $manager->getCours($_GET['id']);
     
