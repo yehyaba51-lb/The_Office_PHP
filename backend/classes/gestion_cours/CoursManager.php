@@ -344,6 +344,11 @@ class CoursManager
     }
 
 
+    public function getNewInscriptions($etudiant_id){
+        return $this->inscriptionModel->getNewInscriptions($etudiant_id);
+    }
+
+    
     public function ajouterCategorie($categorie_nom)
     {
         $data = [
