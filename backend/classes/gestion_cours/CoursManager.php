@@ -314,12 +314,29 @@ class CoursManager
 
     public function createInscription($etudiant_id, $cours_id)
     {
-        $data = [
+        $data_inscription = [
             'etudiant_id' => $etudiant_id,
             'cours_id' => $cours_id
         ];
 
-        return $this->inscriptionModel->creerInscription($data);
+        $create = $this->inscriptionModel->creerInscription($data_inscription);
+
+        if($create === false){
+            return false;
+        }
+
+        $data_progression = [
+            'etudiant_id' => $etudiant_id,
+            'cours_id' => $cours_id,
+        ];
+
+        $progression = $this->progressionModel->creerProgression($data_progression);
+
+        if($progression === false){
+            return false;
+        }
+
+        return $create;
     }
 
     public function supprimerInscription($id){
