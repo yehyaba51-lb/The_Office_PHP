@@ -39,6 +39,23 @@
 
                 http_response_code(200);
                 echo json_encode($soumissionDashboard);
+            } else if(isset($_GET['corrige'])){
+                if(!$auth->verifierRole('Etudiant') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $SoumissionsCorrige = $manager->getSoumissionsCorrige($_GET['id']);
+
+                if($SoumissionsCorrige === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($SoumissionsCorrige);
             } else {
                 if(!$auth->verifierRole('Formateur') ){
                     http_response_code(403);
