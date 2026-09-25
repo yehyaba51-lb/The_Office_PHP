@@ -175,8 +175,8 @@
         public function getStatistiquesEtudiant($etudiant_id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT
-                    SUM(complete_le IS NULL) as en_cours,
-                    SUM(complete_le IS NOT NULL) as terminee
+                    COALESCE(SUM(complete_le IS NULL), 0) as en_cours,
+                    COALESCE(SUM(complete_le IS NOT NULL), 0) as terminee
                 FROM progression
                 WHERE etudiant_id = ?"
             );
@@ -195,5 +195,34 @@
 
             $result = mysqli_stmt_get_result($stmt);
             return mysqli_fetch_assoc($result);
+        }
+
+        public function getCoursTermine($etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT
+                    p.etudiant_id,
+                    c.cours_titre,
+                    p.complete_le
+                FROM progression AS p
+                INNER JOIN cours AS c
+                ON c.cours_id = p.cours_id
+                WHERE p.etudiant_id = ?
+                AND p.complete_le IS NOT NULL"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . $this->conn);
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
     }
