@@ -19,30 +19,49 @@
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit;
-    }
-
-    if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    } else if($_SERVER['REQUEST_METHOD'] === 'GET'){
         if(!isset($_GET['id'])){
             http_response_code(400);
             echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
-            if(!$auth->verifierRole('Etudiant')){
-                http_response_code(403);
-                echo json_encode(['error' => 'Accès refusé']);
-                exit;
+            if(!isset($_GET['cours'])){
+                if(!$auth->verifierRole('Etudiant')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $getStatistics = $tracker->getStatistiquesEtudiant($_GET['id']);
+
+                if($getStatistics === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+                
+                http_response_code(200);
+                echo json_encode($getStatistics);
+            } else {
+                if(!$auth->verifierRole('Etudiant')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $getCoursTermine = $tracker->getCoursTermine($_GET['id']);
+
+                if($getCoursTermine === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($getCoursTermine);
             }
-
-            $getStatistics = $tracker->getStatistiquesEtudiant($_GET['id']);
-
-            if($getStatistics === false){
-                http_response_code(500);
-                echo json_encode(['error' => 'Erreur serveur']);
-                exit;
-            }
-
-            echo json_encode($getStatistics);
         }
-
-
+    } else {
+        http_response_code(405);
+        echo json_encode(['error' => 'Méthode non autorisée']);
     }
