@@ -8,7 +8,6 @@
     require_once('Progression.php');
     require_once('ProgressionLecon.php');
     require_once('ProgressionExercice.php');
-    require_once('Exercice.php');
 
 
     class ProgressionTracker{
@@ -53,6 +52,10 @@
             return $progression_lecon_row !== null && $progression_lecon_row['statut'] !== null;
         }
 
+
+        public function getStatistiquesEtudiant($etudiant_id){
+            return $this->progressionModel->getStatistiquesEtudiant($etudiant_id);
+        }
 
         public function initialiserProgressionLecons($etudiant_id, $cours_id){
             $lecons_rows = $this->leconModel->getLeconsByCours($cours_id);
