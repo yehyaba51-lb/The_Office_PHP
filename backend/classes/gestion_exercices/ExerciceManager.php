@@ -186,6 +186,10 @@
             return $execute;
         }
 
+        public function getSoumissionsCorrige($etudiant_id){
+            return $this->soumissionModel->getSoumissionsCorrige($etudiant_id);
+        }
+
         
         public function supprimerQuestion($question_id){
             return $this->questionModel->supprimerQuestion($question_id);
