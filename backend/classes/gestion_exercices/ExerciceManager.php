@@ -63,6 +63,8 @@
 
             return $rows;
         }
+
+
         public function getExercicesByLecon($lecon_id, $cours_id){
             $rows = $this->exerciceModel->getExercicesByLecon($lecon_id, $cours_id);
             $allExercices = [];
@@ -246,45 +248,7 @@
                 return false;
             }
 
-            $soumission = new Soumission();
-            $soumission->setSoumissionId($row['soumission_id']);
-            $soumission->setEtudiantId($row['etudiant_id']);
-            $soumission->setQuestionId($row['question_id']);
-            $soumission->setSoumissionReponse($row['soumission_reponse']);
-            $soumission->setUrlFichier($row['url_fichier']);
-            $soumission->setSoumisLe($row['soumis_le']);
-            $soumission->setCorrigeLe($row['corrige_le']);
-            $soumission->setCorrigePar($row['corrige_par']);
-            $soumission->setNote($row['note']);
-            $soumission->setCommentaire($row['commentaire']);
-
-            return $soumission;
-        }
-
-        public function getSoumissionsByEtudiant($etudiant_id){
-            $rows = $this->soumissionModel->getSoumissionsByEtudiant($etudiant_id);
-            $allSoumission = [];
-
-            if($rows === false){
-                return false;
-            }
-
-            foreach($rows as $row){
-                $soumission = new Soumission();
-                $soumission->setSoumissionId($row['soumission_id']);
-                $soumission->setEtudiantId($row['etudiant_id']);
-                $soumission->setQuestionId($row['question_id']);
-                $soumission->setSoumissionReponse($row['soumission_reponse']);
-                $soumission->setUrlFichier($row['url_fichier']);
-                $soumission->setSoumisLe($row['soumis_le']);
-                $soumission->setCorrigeLe($row['corrige_le']);
-                $soumission->setCorrigePar($row['corrige_par']);
-                $soumission->setNote($row['note']);
-                $soumission->setCommentaire($row['commentaire']);
-
-                $allSoumission[] = $soumission;
-            }
-            return $allSoumission;
+            return $row;
         }
 
         public function creerSoumission($etudiant_id, $question_id, $soumission_reponse, $url_fichier){
@@ -322,6 +286,10 @@
             ];
 
             return $this->soumissionModel->resoumettre($soumission_id, $data);
+        }
+
+        public function getNotes($etudiant_id){
+            return $this->soumissionModel->getNotes($etudiant_id);
         }
 
     }
