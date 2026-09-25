@@ -40,6 +40,23 @@
 
                 http_response_code(200);
                 echo json_encode($inscriptionPerFormateur);
+            } else if(isset($_GET['new'])){
+                if(!$auth->verifierRole('Etudiant')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $newInscriptions = $manager->getNewInscriptions($_GET['id']);
+
+                if($newInscriptions === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($newInscriptions);
             } else {
                 if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
                     http_response_code(403);
