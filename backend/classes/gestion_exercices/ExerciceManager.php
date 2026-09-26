@@ -4,6 +4,9 @@
     require_once(__DIR__ .'/../acces_donnees/QuestionModel.php');
     require_once(__DIR__ .'/../acces_donnees/ChoixModel.php');
     require_once(__DIR__ .'/../acces_donnees/SoumissionModel.php');
+    require_once(__DIR__ .'/../acces_donnees/CoursModel.php');
+    require_once(__DIR__ .'/../acces_donnees/LeconModel.php');
+    require_once(__DIR__ .'/../acces_donnees/ProgressionExerciceModel.php');
     require_once('Exercice.php');
     require_once('Question.php');
     require_once('Choix.php');
@@ -15,6 +18,9 @@
         private $questionModel;
         private $choixModel;
         private $soumissionModel;
+        private $coursModel;
+        private $leconModel;
+        private $progressionExerciceModel;
 
         public function __construct()
         {
@@ -24,6 +30,9 @@
             $this->questionModel = new QuestionModel($db);
             $this->choixModel = new ChoixModel($db);
             $this->soumissionModel = new SoumissionModel($db);
+            $this->coursModel = new CoursModel($db);
+            $this->leconModel = new LeconModel($db);
+            $this->progressionExerciceModel = new ProgressionExerciceModel($db);
         }
 
 
@@ -249,6 +258,55 @@
             }
 
             return $row;
+        }
+
+        public function getExercicesByEtudiant($etudiant_id){
+            $cours_rows = $this->coursModel->getCoursByEtudiant($etudiant_id);
+
+            if($cours_rows === false){
+                return ['error' => 'Erreur fetching cours'];
+            }
+
+            $lecons = [];
+
+            foreach ($cours_rows as $cours) {
+                $leconsPerCours = $this->leconModel->getLeconsByCours($cours['cours_id']);
+
+                if($leconsPerCours === false){
+                    return ['error' => 'Erreur fetching lecons'];
+                }
+
+                $lecons = array_merge($lecons, $leconsPerCours);
+            }
+
+            $exercices = [];
+
+            foreach ($lecons as $l) {
+                $exercicesPerLecon = $this->exerciceModel->getExercicesByLecon($l['id'], $l['cours_id']);
+
+                if($exercicesPerLecon === false){
+                    return ['error' => 'Erreur fetching exercices'];
+                }
+
+                $exercices = array_merge($exercices, $exercicesPerLecon);
+            }
+
+            foreach ($exercices as $index => $exercice) {
+                $progression = $this->progressionExerciceModel->getProgressionByExerciceEtudiant($etudiant_id, $exercice['exercice_id']);
+            
+                if($progression === false){
+                    return ['error' => 'Erreur fetching progressions'];
+                }
+
+                $exercices[$index]['statut'] = $progression['statut'] ?? null;
+                $exercices[$index]['note']   = $progression['note']   ?? null;
+            }
+
+            return [
+                'cours' => $cours_rows,
+                'lecons' => $lecons,
+                'exercices' => $exercices
+            ];
         }
 
         public function creerSoumission($etudiant_id, $question_id, $soumission_reponse, $url_fichier){
