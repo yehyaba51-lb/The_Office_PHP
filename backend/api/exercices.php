@@ -27,22 +27,41 @@
             echo json_encode(['error' => 'Id manquante']);
             exit;
         } else {
-            if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
-                http_response_code(403);
-                echo json_encode(['error' => 'Accès refusé']);
-                exit;
+            if(isset($_GET['exosEtudiant'])){
+                if(!$auth->verifierRole('Etudiant')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $allExercices = $manager->getExercicesByEtudiant($_GET['id']);
+                
+                if($allExercices === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($allExercices);
+            } else {
+                if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+    
+                $exercice_rows = $manager->getExercicesByCours($_GET['id']);
+    
+                if($exercice_rows === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+    
+                http_response_code(200);
+                echo json_encode($exercice_rows);
             }
-
-            $exercice_rows = $manager->getExercicesByCours($_GET['id']);
-
-            if($exercice_rows === false){
-                http_response_code(500);
-                echo json_encode(['error' => 'Erreur serveur']);
-                exit;
-            }
-
-            http_response_code(200);
-            echo json_encode($exercice_rows);
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST') {
         if(!isset($_GET['coursId'])){
