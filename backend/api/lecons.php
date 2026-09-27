@@ -28,7 +28,7 @@
         } else {
             if(isset($_GET['lecon'])){
                 if(isset($_GET['one'])){
-                    if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
+                    if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') && !$auth->verifierRole('Etudiant')){
                         http_response_code(403);
                         echo json_encode(['error' => 'Accès refusé']);
                         exit;
@@ -46,7 +46,7 @@
                     echo json_encode($lecon);
 
                 } else if(isset($_GET['allContent'])){
-                    if(!$auth->verifierRole('Formateur')){
+                    if(!$auth->verifierRole('Formateur') && !$auth->verifierRole('Etudiant')){
                         http_response_code(403);
                         echo json_encode(['error' => 'Accès refusé']);
                         exit;
