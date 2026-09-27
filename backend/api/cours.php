@@ -72,6 +72,25 @@
 
                 http_response_code(200);
                 echo json_encode($coursByEtudiant);
+            } else if(isset($_GET['etudiantId'])){
+                
+
+                $coursDetails = $manager->getCoursDetailsByEtudiant($_GET['id'], $_GET['etudiantId']);
+
+                if($coursDetails === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if(is_array($coursDetails) && isset($coursDetails['error'])){
+                    http_response_code(400);
+                    echo json_encode($coursDetails);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($coursDetails);
             } else {
                 $coursById = $manager->getCours($_GET['id']);
     
