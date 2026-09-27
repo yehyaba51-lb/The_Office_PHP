@@ -50,6 +50,48 @@ class CoursModel
         return mysqli_fetch_assoc($result);
     }
 
+    public function getCoursDetails($id)
+    {
+        $stmt = mysqli_prepare($this->conn, 
+            "SELECT
+                c.cours_id,
+                c.cours_titre,
+                c.description,
+                CONCAT(u.prenom, ' ', u.nom) AS formateur,
+                c.url_image,
+                i.note_finale,
+                (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
+                (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id ) AS lecons
+            FROM cours AS c
+            LEFT JOIN utilisateur AS u
+            ON c.formateur_id = u.utilisateur_id
+            INNER JOIN inscription AS i
+            ON i.cours_id = c.cours_id
+            WHERE c.cours_id = ?");
+
+        if (!$stmt) {
+            error_log('Prepare failed: ' . mysqli_error($this->conn));
+            return false;
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $id);
+
+        $execute = mysqli_stmt_execute($stmt);
+            
+        if(!$execute){
+            return false;
+        }
+
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (!$result) {
+            error_log('Query failed: ' . mysqli_error($this->conn));
+            return false;
+        }
+
+        return mysqli_fetch_assoc($result);
+    }
+
     public function getAllCours()
     {
         $query = "SELECT
