@@ -9,6 +9,7 @@ require_once(__DIR__ . '/../acces_donnees/InscriptionModel.php');
 require_once(__DIR__ . '/../acces_donnees/CategorieModel.php');
 require_once(__DIR__ .'/../acces_donnees/SoumissionModel.php');
 require_once(__DIR__ . '/../acces_donnees/ProgressionModel.php');
+require_once(__DIR__ . '/../acces_donnees/ProgressionLeconModel.php');
 require_once('Cours.php');
 require_once('Lecon.php');
 require_once('LeconTexte.php');
@@ -29,6 +30,7 @@ class CoursManager
     private $categorieModel;
     private $soumissionModel;
     private $progressionModel;
+    private $progressionLeconModel;
 
     public function __construct()
     {
@@ -42,6 +44,7 @@ class CoursManager
         $this->categorieModel = new CategorieModel($db);
         $this->soumissionModel = new SoumissionModel($db);
         $this->progressionModel = new ProgressionModel($db);
+        $this->progressionLeconModel = new ProgressionLeconModel($db);
     }
 
     public function creerPlaceholder($cours_titre, $formateur_id, $categorie_id)
@@ -160,6 +163,32 @@ class CoursManager
             $result[] = $row;
         }
         return $result;
+    }
+
+    public function getCoursDetailsByEtudiant($cours_id, $etudiant_id){
+        $coursDetails = $this->coursModel->getCoursDetails($cours_id);
+
+        if($coursDetails === false){
+            return ['error' => 'Erreur fetching cours'];
+        }
+
+        $lecons = $this->leconModel->getLeconsByCours($cours_id);
+
+        if($lecons === false){
+            return ['error' => 'Erreur fetching lecons'];
+        }
+
+        $progression = $this->progressionModel->getStudentLeconsProgression($etudiant_id, $cours_id);
+
+        if($progression === false){
+            return ['error' => 'Erreur fetching progression'];
+        }
+
+        return [
+            'cours' => $coursDetails,
+            'lecons' => $lecons,
+            'progression' => $progression
+        ];
     }
 
     public function getAllContent($cours_id, $lecon_id){
@@ -308,6 +337,10 @@ class CoursManager
             return false;
         }
 
+        if(is_array($create) && isset($create['error'])){
+            return $create;
+        }
+
         $data_progression = [
             'etudiant_id' => $etudiant_id,
             'cours_id' => $cours_id,
@@ -316,6 +349,25 @@ class CoursManager
         $progression = $this->progressionModel->creerProgression($data_progression);
 
         if($progression === false){
+            return false;
+        }
+        
+        $first_lecon_id = $this->leconModel->getLeconByOrdre($cours_id, 1);
+        
+        if(!$first_lecon_id){
+            return false;
+        }
+
+
+        $progression_lecon_data = [
+            'cours_id' => $cours_id,
+            'lecon_id' => $first_lecon_id['lecon_id'],
+            'etudiant_id' => $etudiant_id,
+        ];
+
+        $createProgressionLecon = $this->progressionLeconModel->creerProgressionLecon($progression_lecon_data);
+
+        if($createProgressionLecon === false){
             return false;
         }
 
