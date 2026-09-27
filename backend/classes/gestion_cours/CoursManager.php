@@ -207,7 +207,15 @@ class CoursManager
             return false;
         }
 
+        $lecon = $this->leconModel->getLecon($lecon_id, $cours_id);
+        if($lecon === false){
+            return false;
+        }
+
+
+
         $allContent = [
+            'lecon' => $lecon,
             'videos' => $videos,
             'textes' => $textes,
             'pdfs' => $pdfs
