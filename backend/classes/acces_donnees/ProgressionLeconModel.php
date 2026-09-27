@@ -71,15 +71,15 @@
 
         public function creerProgressionLecon($data){
             $stmt = mysqli_prepare($this->conn, 
-                "INSERT INTO progression_lecon(cours_id, lecon_id, etudiant_id, complete_le)
-                VALUES(?, ?, ?, ?)");
+                "INSERT INTO progression_lecon(cours_id, lecon_id, etudiant_id, statut)
+                VALUES(?, ?, ?, 'en_cours')");
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "iiis", $data['cours_id'], $data['lecon_id'], $data['etudiant_id'], $data['complete_le']);
+            mysqli_stmt_bind_param($stmt, "iii", $data['cours_id'], $data['lecon_id'], $data['etudiant_id']);
             $execute = mysqli_stmt_execute($stmt);
 
             if($execute === false){
