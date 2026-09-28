@@ -94,6 +94,34 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+
+        public function getQuestionsPerExercice($exercice_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT *
+                FROM question AS q
+                INNER JOIN exercice AS e
+                ON q.exercice_id = e.exercice_id
+                WHERE q.exercice_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $exercice_id);
+
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
         public function creerQuestion($data){
             if(empty($data['texte_question']) || strlen(trim($data['texte_question'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_question'])){
                 return ['error' => 'Texte invalide'];
