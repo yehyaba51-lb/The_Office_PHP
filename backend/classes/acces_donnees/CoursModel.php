@@ -50,7 +50,7 @@ class CoursModel
         return mysqli_fetch_assoc($result);
     }
 
-    public function getCoursDetails($id)
+    public function getCoursDetails($id, $etudiant_id)
     {
         $stmt = mysqli_prepare($this->conn, 
             "SELECT
@@ -59,7 +59,7 @@ class CoursModel
                 c.description,
                 CONCAT(u.prenom, ' ', u.nom) AS formateur,
                 c.url_image,
-                i.note_finale,
+                (SELECT note_finale FROM inscription AS i WHERE i.etudiant_id = ? AND cours_id = ?) AS note_finale,
                 (SELECT COUNT(*) FROM exercice AS e WHERE e.cours_id = c.cours_id) AS exercices,
                 (SELECT COUNT(*) FROM lecon AS l WHERE l.cours_id = c.cours_id ) AS lecons
             FROM cours AS c
@@ -74,7 +74,7 @@ class CoursModel
             return false;
         }
 
-        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_bind_param($stmt, "iii", $etudiant_id, $id, $id);
 
         $execute = mysqli_stmt_execute($stmt);
             
