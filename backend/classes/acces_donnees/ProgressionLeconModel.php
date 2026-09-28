@@ -1,24 +1,36 @@
 <?php
     require_once('BaseDeDonnee.php');
+    require_once(__DIR__ . '/../acces_donnees/LeconModel.php');
+    require_once(__DIR__ . '/../acces_donnees/ProgressionModel.php');
 
     class ProgressionLeconModel{
         private $conn;
+        private $leconModel;
+        private $progressionModel;
 
         public function __construct(BaseDeDonnee $db){
             $this->conn = $db->getConn();
+            $this->leconModel = new LeconModel($db);
+            $this->progressionModel = new ProgressionModel($db);
         }
 
 
         // progressionLecon table
-        public function getProgressionLecon($id){
-            $stmt = mysqli_prepare($this->conn, "SELECT * FROM progression_lecon WHERE progression_lecon_id = ?");
+        public function getProgressionLecon($cours_id, $lecon_id, $etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT *
+                FROM progression_lecon 
+                WHERE cours_id = ?
+                AND lecon_id = ?
+                AND etudiant_id = ?"
+            );
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_bind_param($stmt, "iii", $cours_id, $lecon_id, $etudiant_id);
             $execute = mysqli_stmt_execute($stmt);
 
             if($execute === false){
@@ -72,7 +84,8 @@
         public function creerProgressionLecon($data){
             $stmt = mysqli_prepare($this->conn, 
                 "INSERT INTO progression_lecon(cours_id, lecon_id, etudiant_id, statut)
-                VALUES(?, ?, ?, 'en_cours')");
+                VALUES(?, ?, ?, 'en_cours')"
+            );
 
             if (!$stmt) {
                 error_log('Prepare failed: ' . mysqli_error($this->conn));
@@ -87,6 +100,85 @@
             }
 
             return mysqli_insert_id($this->conn);
+        }
+
+        public function etudiantsIdsAvecLeconTerminee($cours_id, $lecon_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT etudiant_id
+                FROM progression_lecon
+                WHERE cours_id = ?
+                AND lecon_id = ?
+                AND statut = 'terminee'"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "ii", $cours_id, $lecon_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
+        public function updateProgressionLeconStatut($cours_id, $lecon_id, $etudiant_id){
+            $stmt_1 = mysqli_prepare($this->conn, 
+                "UPDATE progression_lecon
+                SET statut = 'terminee', complete_le = NOW()
+                WHERE cours_id = ?
+                AND lecon_id = ?
+                AND etudiant_id = ?"
+            );
+
+            if(!$stmt_1) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt_1, "iii", $cours_id, $lecon_id, $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt_1);
+
+            if($execute === false){
+                return false;
+            }
+
+            $next_lecon_id = $lecon_id + 1;
+            $next_lecon = $this->leconModel->getLecon($next_lecon_id, $cours_id);
+
+            if($next_lecon){
+                $stmt = mysqli_prepare($this->conn, 
+                    "INSERT INTO progression_lecon(cours_id, lecon_id, etudiant_id, statut)
+                    VALUES(?, ?, ?, 'en_cours')"
+                );
+    
+                if (!$stmt) {
+                    error_log('Prepare failed: ' . mysqli_error($this->conn));
+                    return false;
+                }
+    
+                mysqli_stmt_bind_param($stmt, "iii", $cours_id, $next_lecon_id, $etudiant_id);
+                $execute = mysqli_stmt_execute($stmt);
+    
+                if($execute === false){
+                    return false;
+                }
+                
+                return ['has_next' => true];
+            } else {
+                $progressionCompleteLeUpdate = $this->progressionModel->updateProgressionCompleteLe($cours_id, $etudiant_id);
+
+                if($progressionCompleteLeUpdate === false){
+                    return false;
+                }
+
+                return ['has_next' => false];
+            }
         }
 
         public function updateProgressionLecon($data){
