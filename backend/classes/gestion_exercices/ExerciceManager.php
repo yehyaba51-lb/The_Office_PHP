@@ -373,7 +373,53 @@
                 'soumission_reponse' => $soumission_reponse
             ];
 
-            return $this->soumissionModel->creerSoumissionText($data);
+            $submitted = $this->soumissionModel->creerSoumissionText($data);
+
+            if($submitted === false){
+                return false;
+            }
+            
+            $exercice_row = $this->questionModel->getExerciceIdByQuestion($question_id);
+            
+            if($exercice_row === false){
+                return false;
+            }
+        
+            $exercice_id = $exercice_row['exercice_id'];
+
+            $number_of_questions_per_exercice = $this->questionModel->getNumberOfQuestionsPerExercice($exercice_id);
+
+            if($number_of_questions_per_exercice === false){
+                return false;
+            }
+
+            
+
+            $number_of_soumissions_per_exercice = $this->soumissionModel->getNumberOfSoumissionsPerExercice($exercice_id, $etudiant_id);
+
+            if($number_of_soumissions_per_exercice === false){
+                return false;
+            }
+
+            $total = $number_of_questions_per_exercice['total'];
+            $done  = $number_of_soumissions_per_exercice['total'];
+
+            if($total === $done){
+                $dataUpdate = [
+                    'statut' => 'soumis',
+                    'etudiant_id' => $etudiant_id,
+                    'exercice_id' => $exercice_id
+                ];
+
+                $updateProgressionExercice = $this->progressionExerciceModel->updateProgressionExercice($dataUpdate);
+
+                if($updateProgressionExercice === false){
+                    return false;
+                }
+
+                return true;
+            }
+            return true;
         }
 
         public function creerSoumissionFile($etudiant_id, $question_id, $soumission_reponse){
@@ -383,7 +429,53 @@
                 'soumission_reponse' => $soumission_reponse
             ];
 
-            return $this->soumissionModel->creerSoumissionFile($data);
+            $submitted = $this->soumissionModel->creerSoumissionFile($data);
+
+            if($submitted === false){
+                return false;
+            }
+            
+            $exercice_row = $this->questionModel->getExerciceIdByQuestion($question_id);
+            
+            if($exercice_row === false){
+                return false;
+            }
+        
+            $exercice_id = $exercice_row['exercice_id'];
+
+            $number_of_questions_per_exercice = $this->questionModel->getNumberOfQuestionsPerExercice($exercice_id);
+
+            if($number_of_questions_per_exercice === false){
+                return false;
+            }
+
+            
+
+            $number_of_soumissions_per_exercice = $this->soumissionModel->getNumberOfSoumissionsPerExercice($exercice_id, $etudiant_id);
+
+            if($number_of_soumissions_per_exercice === false){
+                return false;
+            }
+
+            $total = $number_of_questions_per_exercice['total'];
+            $done  = $number_of_soumissions_per_exercice['total'];
+
+            if($total === $done){
+                $dataUpdate = [
+                    'statut' => 'soumis',
+                    'etudiant_id' => $etudiant_id,
+                    'exercice_id' => $exercice_id
+                ];
+
+                $updateProgressionExercice = $this->progressionExerciceModel->updateProgressionExercice($dataUpdate);
+
+                if($updateProgressionExercice === false){
+                    return false;
+                }
+
+                return true;
+            }
+            return true;
         }
 
         public function corrigerSoumission($soumission_id, $formateur_id, $note, $commentaire){
