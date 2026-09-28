@@ -26,27 +26,23 @@
             echo json_encode(['error' => 'Id manquant']);
             exit;
         } else {
-            if(isset($_GET['leconId'])){
-                if(isset($_GET['allExercices'])){
-                    if(!$auth->verifierRole('Etudiant') ){
-                        http_response_code(403);
-                        echo json_encode(['error' => 'Accès refusé']);
-                        exit;
-                    }
-
-                    $allQuestionsPerExercice = $manager->getQuestionsPerLecon($_GET['id'], $_GET['leconId']);
-
-                    if($allQuestionsPerExercice === false){
-                        http_response_code(500);
-                        echo json_encode(['error' => 'Erreur serveur']);
-                        exit;
-                    }
-
-                    http_response_code(200);
-                    echo json_encode($allQuestionsPerExercice);
+            if(isset($_GET['allExercices'])){
+                if(!$auth->verifierRole('Etudiant') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
                 }
-            } else {
-                if(isset($_GET['allQuestion'])){
+
+                $allQuestionsPerExercice = $manager->getQuestionsByExercice($_GET['id']);
+                if($allQuestionsPerExercice === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                http_response_code(200);
+                echo json_encode($allQuestionsPerExercice);
+            } else if(isset($_GET['allQuestion'])){
                     if(!$auth->verifierRole('Formateur') ){
                         http_response_code(403);
                         echo json_encode(['error' => 'Accès refusé']);
@@ -65,7 +61,6 @@
                     echo json_encode($allQuestions);
                 }
             }
-        }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST') {
         if(!$auth->verifierRole('Formateur') ){
             http_response_code(403);
