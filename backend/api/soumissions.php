@@ -92,6 +92,26 @@
 
                 http_response_code(200);
                 echo json_encode($singleSoumission);
+            } else if(isset($_GET['exerciceId'])){
+                if(isset($_GET['getIds'])){
+                    if(!$auth->verifierRole('Etudiant') ){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    } else {
+
+                    $getIds = $manager->getDoneSoumissionsIds($_GET['id'], $_GET['exerciceId']);
+
+                    if($getIds === false){
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    http_response_code(200);
+                    echo json_encode($getIds);
+                    }
+                }
             } else {
                 if(!$auth->verifierRole('Formateur') ){
                     http_response_code(403);
