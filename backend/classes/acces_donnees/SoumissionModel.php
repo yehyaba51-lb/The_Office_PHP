@@ -163,6 +163,35 @@
             return mysqli_insert_id($this->conn);
         }
 
+        public function getDoneSoumissionsIds($etudiant_id, $exercice_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT
+                    s.question_id,
+                    s.soumission_reponse,
+                    s.url_fichier
+                FROM soumission AS s
+                INNER JOIN question AS q
+                ON s.question_id = q.question_id
+                WHERE q.exercice_id = ?
+                AND s.etudiant_id = ?"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "ii", $exercice_id, $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
         public function getNumberOfSoumissionsPerExercice($exercice_id, $etudiant_id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT COUNT(*) AS total
