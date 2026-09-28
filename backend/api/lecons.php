@@ -45,23 +45,25 @@
                     http_response_code(200);
                     echo json_encode($lecon);
 
-                } else if(isset($_GET['allContent'])){
-                    if(!$auth->verifierRole('Formateur') && !$auth->verifierRole('Etudiant')){
-                        http_response_code(403);
-                        echo json_encode(['error' => 'Accès refusé']);
-                        exit;
+                } else if(isset($_GET['etudiantId'])){
+                    if(isset($_GET['allContent'])){
+                        if(!$auth->verifierRole('Formateur') && !$auth->verifierRole('Etudiant')){
+                            http_response_code(403);
+                            echo json_encode(['error' => 'Accès refusé']);
+                            exit;
+                        }
+    
+                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $_GET['etudiantId']);
+    
+                        if($allContent === false){
+                            http_response_code(500);
+                            echo json_encode(['error' => 'Erreur serveur']);
+                            exit;
+                        }
+    
+                        http_response_code(200);
+                        echo json_encode($allContent);
                     }
-
-                    $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon']);
-
-                    if($allContent === false){
-                        http_response_code(500);
-                        echo json_encode(['error' => 'Erreur serveur']);
-                        exit;
-                    }
-
-                    http_response_code(200);
-                    echo json_encode($allContent);
                 } else {
                     http_response_code(400);
                     echo json_encode(['error' => 'Paramètre one ou allContent requis']);
