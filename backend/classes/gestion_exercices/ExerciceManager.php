@@ -422,6 +422,16 @@
             return true;
         }
 
+        public function getDoneSoumissionsIds($etudiant_id, $exercice_id){
+            $getIds = $this->soumissionModel->getDoneSoumissionsIds($etudiant_id, $exercice_id);
+
+            if($getIds === false){
+                return false;
+            }
+
+            return $getIds;
+        }
+
         public function creerSoumissionFile($etudiant_id, $question_id, $soumission_reponse){
             $data = [
                 'etudiant_id' => $etudiant_id,
