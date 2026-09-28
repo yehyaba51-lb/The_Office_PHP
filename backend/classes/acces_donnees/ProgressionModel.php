@@ -196,6 +196,29 @@
             return $execute;
         }
 
+        public function updateDerniereLeconId($cours_id, $lecon_id, $etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "UPDATE progression
+                SET derniere_lecon_id = ?,
+                modifie_le = NOW()
+                WHERE cours_id = ?
+                AND etudiant_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . $this->conn);
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "iii", $lecon_id, $cours_id, $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return $execute;
+        }
         public function getStatistiquesEtudiant($etudiant_id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT
@@ -248,5 +271,28 @@
 
             $result = mysqli_stmt_get_result($stmt);
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
+        public function updateProgressionCompleteLe($cours_id, $etudiant_id){
+            $stmt = mysqli_prepare($this->conn,
+                "UPDATE progression
+                SET complete_le = NOW()
+                WHERE cours_id = ?
+                AND etudiant_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . $this->conn);
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "ii", $cours_id, $etudiant_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return true;
         }
     }
