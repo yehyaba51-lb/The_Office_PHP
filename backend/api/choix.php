@@ -50,7 +50,7 @@
                         exit;
                     }
 
-                    $allQuestionsPerExercice = $manager->getChoixPerLecon($_GET['id'], $_GET['leconId']);
+                    $allQuestionsPerExercice = $manager->getChoixPerExercice($_GET['id']);
 
                     if($allQuestionsPerExercice === false){
                         http_response_code(500);
