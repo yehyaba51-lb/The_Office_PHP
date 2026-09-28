@@ -7,6 +7,7 @@
     require_once(__DIR__ .'/../acces_donnees/CoursModel.php');
     require_once(__DIR__ .'/../acces_donnees/LeconModel.php');
     require_once(__DIR__ .'/../acces_donnees/ProgressionExerciceModel.php');
+    require_once(__DIR__ .'/../acces_donnees/ProgressionLeconModel.php');
     require_once('Exercice.php');
     require_once('Question.php');
     require_once('Choix.php');
@@ -21,6 +22,7 @@
         private $coursModel;
         private $leconModel;
         private $progressionExerciceModel;
+        private $progressionLeconModel;
 
         public function __construct()
         {
@@ -33,6 +35,7 @@
             $this->coursModel = new CoursModel($db);
             $this->leconModel = new LeconModel($db);
             $this->progressionExerciceModel = new ProgressionExerciceModel($db);
+            $this->progressionLeconModel = new ProgressionLeconModel($db);
         }
 
 
@@ -43,7 +46,31 @@
                 'exercice_titre' => $exercice_titre
             ];
 
-            return $this->exerciceModel->creerExercice($data);
+            $exercice_id = $this->exerciceModel->creerExercice($data);
+
+            if($exercice_id === false){
+                return false;
+            }
+
+            if(is_array($exercice_id) && isset($exercice_id['error'])){
+                return $exercice_id;
+            }
+            
+            $etudiantsIdsAvecLeconTerminee = $this->progressionLeconModel->etudiantsIdsAvecLeconTerminee($cours_id, $lecon_id);
+
+            if($etudiantsIdsAvecLeconTerminee === false){
+                return false;
+            }
+
+            foreach ($etudiantsIdsAvecLeconTerminee as $etudiant) {
+                $progression_exercice_row = $this->progressionExerciceModel->creerProgressionExercice($etudiant['etudiant_id'], $exercice_id);
+
+                if($progression_exercice_row === false){
+                    return false;
+                }
+            }
+
+            return true;
         }
 
 
@@ -134,8 +161,18 @@
             return $questionsPerLecon;
         }
 
-        public function getChoixPerLecon($cours_id, $lecon_id){
-            $choixPerLecon = $this->choixModel->getChoixPerLecon($cours_id, $lecon_id);
+        public function getQuestionsPerExercice($exercice_id){
+            $questionsPerLecon = $this->questionModel->getQuestionsPerExercice($cours_id, $lecon_id);
+
+            if($questionsPerLecon === false){
+                return false;
+            }
+
+            return $questionsPerLecon;
+        }
+
+        public function getChoixPerExercice($exercice_id){
+            $choixPerLecon = $this->choixModel->getChoixPerExercice($exercice_id);
 
             if($choixPerLecon === false){
                 return false;
