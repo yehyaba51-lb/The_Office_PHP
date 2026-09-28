@@ -42,6 +42,30 @@
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
         }
 
+        public function getExerciceIdByQuestion($question_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT exercice_id
+                FROM question
+                WHERE question_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $question_id);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+
+            return mysqli_fetch_assoc($result);
+        }
+
         public function getQuestionsByExercice($exercice_id){
             $stmt = mysqli_prepare($this->conn, 
                 "SELECT *
@@ -120,6 +144,28 @@
             $result = mysqli_stmt_get_result($stmt);
 
             return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+
+        public function getNumberOfQuestionsPerExercice($exercice_id){
+            $stmt = mysqli_prepare($this->conn,
+                "SELECT COUNT(*) AS total
+                FROM question
+                WHERE exercice_id = ?"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "i", $exercice_id);
+            $execute = mysqli_stmt_execute($stmt);
+            if($execute === false){
+                return false;
+            }
+
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_assoc($result);
         }
 
         public function creerQuestion($data){
