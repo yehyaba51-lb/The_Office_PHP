@@ -52,6 +52,37 @@
             return $progression_lecon_row !== null && $progression_lecon_row['statut'] !== null;
         }
 
+        public function unlockNextLecon($cours_id, $lecon_id, $etudiant_id){
+            $updateProgression = $this->progressionModel->updateDerniereLeconId($cours_id, $lecon_id, $etudiant_id);
+
+            if($updateProgression === false){
+                return ['error' => 'Pas pu changer derniere lecon id in progression table'];
+            }
+
+            $updateProgressionLecon = $this->progressionLeconModel->updateProgressionLeconStatut($cours_id, $lecon_id, $etudiant_id);
+
+            if($updateProgressionLecon === false){
+                return ['error' => 'Pas pu modifier et creer row in progression table'];
+            }
+
+            $exercices = $this->exerciceModel->getExercicesByLecon($lecon_id, $cours_id);
+
+            if($exercices === false){
+                return ['error' => 'Pas pu recuperer exercice'];
+            }
+
+            foreach ($exercices as $exercice){
+                $creerProgressionExercice = $this->progressionExerciceModel->creerProgressionExercice($etudiant_id, $exercice['exercice_id']);
+
+                if($creerProgressionExercice === false){
+                    return ['error' => 'Pas pu recuperer exercice'];
+                }
+            }
+
+
+            return true;
+        }
+
 
         public function getStatistiquesEtudiant($etudiant_id){
             return $this->progressionModel->getStatistiquesEtudiant($etudiant_id);
