@@ -166,7 +166,7 @@ class CoursManager
     }
 
     public function getCoursDetailsByEtudiant($cours_id, $etudiant_id){
-        $coursDetails = $this->coursModel->getCoursDetails($cours_id);
+        $coursDetails = $this->coursModel->getCoursDetails($cours_id, $etudiant_id);
 
         if($coursDetails === false){
             return ['error' => 'Erreur fetching cours'];
@@ -191,7 +191,7 @@ class CoursManager
         ];
     }
 
-    public function getAllContent($cours_id, $lecon_id){
+    public function getAllContent($cours_id, $lecon_id, $etudiant_id){
         $videos = $this->leconVideoModel->getLeconVideosByLecon($cours_id, $lecon_id);
         if($videos === false){
             return false;
@@ -212,10 +212,20 @@ class CoursManager
             return false;
         }
 
+        $lecon_count = $this->leconModel->getLeconsCount($cours_id);
+        if($lecon_count === false){
+            return false;
+        }
 
+        $progression_lecon = $this->progressionLeconModel->getProgressionLecon($cours_id, $lecon_id, $etudiant_id);
+        if($progression_lecon === false){
+            return false;
+        }
 
         $allContent = [
             'lecon' => $lecon,
+            'lecon_count' => $lecon_count,
+            'progression_lecon' => $progression_lecon,
             'videos' => $videos,
             'textes' => $textes,
             'pdfs' => $pdfs
