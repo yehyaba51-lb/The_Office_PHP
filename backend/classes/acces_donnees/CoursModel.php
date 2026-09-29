@@ -203,6 +203,29 @@ class CoursModel
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
+    public function verifierAccesFormateur($formateur_id, $cours_id){
+        $stmt = mysqli_prepare($this->conn,
+            "SELECT 1 FROM cours WHERE formateur_id = ? AND cours_id = ?"
+        );
+
+        if(!$stmt){
+            error_log('Prepare failed: ' . mysqli_error($this->conn));
+            return false;
+        }
+
+        mysqli_stmt_bind_param($stmt, "ii", $formateur_id, $cours_id);
+
+        $execute = mysqli_stmt_execute($stmt);
+
+        if(!$execute){
+            return false;
+        }
+        
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+        return $row !== null;
+    }
+
     public function getNombreCours($formateur_id){
         $stmt = mysqli_prepare($this->conn, 
             "SELECT
