@@ -16,6 +16,8 @@
                     c.cours_titre AS cours,
                     e.exercice_titre AS exercice,
                     q.texte_question AS question,
+                    q.question_id,
+                    s.etudiant_id,
                     s.note,
                     s.soumis_le,
                     s.corrige_le,
@@ -140,7 +142,7 @@
 
 
         public function creerSoumissionText($data){
-            if(empty($data['soumission_reponse']) || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]+$/", $data['soumission_reponse'])){
+            if(empty($data['soumission_reponse'])){
                 return ['error' => 'Soumission invalide ou pas rempli'];
             }
             $stmt = mysqli_prepare($this->conn, 
@@ -299,7 +301,8 @@
                 ON c.cours_id = e.cours_id
                 INNER JOIN utilisateur AS u
                 ON u.utilisateur_id = s.etudiant_id
-                WHERE c.formateur_id = ?"
+                WHERE c.formateur_id = ?
+                ORDER By soumis_le DESC"
             );
 
             if(!$stmt){
