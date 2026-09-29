@@ -95,7 +95,8 @@
             if(isset($data['note'])){
                 $stmt = mysqli_prepare($this->conn, 
                     "UPDATE progression_exercice
-                    SET note = ?
+                    SET note = ?,
+                    statut = 'termine'
                     WHERE etudiant_id = ?
                     AND exercice_id = ?"
                 );
