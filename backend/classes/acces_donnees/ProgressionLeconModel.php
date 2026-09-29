@@ -148,8 +148,11 @@
                 return false;
             }
 
-            $next_lecon_id = $lecon_id + 1;
-            $next_lecon = $this->leconModel->getLecon($next_lecon_id, $cours_id);
+            $lecon = $this->leconModel->getLecon($lecon_id, $cours_id);
+
+            $next_lecon_ordre = $lecon['lecon_ordre'] + 1;
+
+            $next_lecon = $this->leconModel->getLeconByOrdre($cours_id, $next_lecon_ordre);
 
             if($next_lecon){
                 $stmt = mysqli_prepare($this->conn, 
@@ -162,14 +165,14 @@
                     return false;
                 }
     
-                mysqli_stmt_bind_param($stmt, "iii", $cours_id, $next_lecon_id, $etudiant_id);
+                mysqli_stmt_bind_param($stmt, "iii", $cours_id, $next_lecon['lecon_id'], $etudiant_id);
                 $execute = mysqli_stmt_execute($stmt);
     
                 if($execute === false){
                     return false;
                 }
                 
-                return ['has_next' => true];
+                return ['has_next' => true, 'next_lecon_id' => $next_lecon['lecon_id']];
             } else {
                 $progressionCompleteLeUpdate = $this->progressionModel->updateProgressionCompleteLe($cours_id, $etudiant_id);
 
