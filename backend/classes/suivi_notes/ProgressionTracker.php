@@ -79,8 +79,7 @@
                 }
             }
 
-
-            return true;
+            return $updateProgressionLecon;
         }
 
 
