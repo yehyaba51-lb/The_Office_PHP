@@ -31,7 +31,17 @@
                     exit;
                 }
 
-                $soumissionDashboard = $manager->getSoumissionDashboard($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $formateur_id = $session['utilisateur_id'];
+
+                $soumissionDashboard = $manager->getSoumissionDashboard($formateur_id);
 
                 if($soumissionDashboard === false){
                     http_response_code(400);
@@ -48,7 +58,17 @@
                     exit;
                 }
 
-                $SoumissionsCorrige = $manager->getSoumissionsCorrige($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $SoumissionsCorrige = $manager->getSoumissionsCorrige($etudiant_id);
 
                 if($SoumissionsCorrige === false){
                     http_response_code(500);
@@ -65,7 +85,17 @@
                     exit;
                 }
 
-                $etudiantNotes = $manager->getNotes($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $etudiantNotes = $manager->getNotes($etudiant_id);
 
                 if($etudiantNotes === false){
                     http_response_code(500);
@@ -82,11 +112,27 @@
                     exit;
                 }
 
+                $session = $auth->verifierSession();
+
+               if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $etudiant_id = $session['utilisateur_id'];
+                
                 $singleSoumission = $manager->getSoumission($_GET['id']);
 
                 if($singleSoumission === false){
                     http_response_code(500);
                     echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if($singleSoumission['etudiant_id'] !== $etudiant_id){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
                     exit;
                 }
 
@@ -100,7 +146,34 @@
                         exit;
                     } else {
 
-                    $getIds = $manager->getDoneSoumissionsIds($_GET['id'], $_GET['exerciceId']);
+                    $session = $auth->verifierSession();
+
+                    if($session === false){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+                            
+                    $etudiant_id = $session['utilisateur_id'];
+
+                    $cours = $manager->getExercice($_GET['exerciceId']);
+
+                    if ($cours === false) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $cours_id = $cours['cours_id'];
+
+                    if(!$auth->verifierAccesEtudiant($etudiant_id, $cours_id)){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+
+        
+                    $getIds = $manager->getDoneSoumissionsIds($etudiant_id, $_GET['exerciceId']);
 
                     if($getIds === false){
                         http_response_code(500);
@@ -119,7 +192,17 @@
                     exit;
                 }
 
-                $soumissionsByFormateur = $manager->getSoumissionFormateur($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $formateur_id = $session['utilisateur_id'];
+
+                $soumissionsByFormateur = $manager->getSoumissionFormateur($formateur_id);
 
                 if($soumissionsByFormateur === false){
                     http_response_code(400);
@@ -149,8 +232,49 @@
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $user = $auth->verifierSession();
-            $formateur_id = $user['utilisateur_id'];
+            $session = $auth->verifierSession();
+
+            if($session === false){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+                    
+            $formateur_id = $session['utilisateur_id'];
+
+            $soumission = $manager->getSoumission($_GET['id']);
+
+            if($soumission === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $question_id = $soumission['question_id'];
+
+            $exercice = $manager->getExerciceIdByQuestion($question_id);
+
+            if($exercice === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $cours = $manager->getExercice($exercice['exercice_id']);
+
+            if ($cours === false) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $cours_id = $cours['cours_id'];
+
+            if(!$auth->verifierAccesFormateur($formateur_id, $cours_id)){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
             
             $result = $manager->corrigerSoumission($_GET['id'], $formateur_id, $data['note'], $data['commentaire']);
             
@@ -165,12 +289,60 @@
         }
     } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if(isset($_GET['file'])){
+            if(!isset($_GET['questionId'])){
+                http_response_code(400);
+                echo json_encode(['error' => 'Id manquant']);
+                exit;
+            }
+
             if(!$auth->verifierRole('Etudiant') ){
                 http_response_code(403);
                 echo json_encode(['error' => 'Accès refusé']);
                 exit;
             }
 
+            $session = $auth->verifierSession();
+
+            if($session === false){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+                            
+            $etudiant_id = $session['utilisateur_id'];
+
+            $exercice = $manager->getExerciceIdByQuestion($_GET['questionId']);
+
+            if($exercice === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $cours = $manager->getExercice($exercice['exercice_id']);
+
+            if ($cours === false) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $cours_id = $cours['cours_id'];
+
+            if(!$auth->verifierAccesEtudiant($etudiant_id, $cours_id)){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+
+            
+
+            if(!isset($_FILES['file'])){
+                http_response_code(400);
+                echo json_encode(['error' => 'Aucun fichier envoyé']);
+                exit;
+            }
+            
             $file = $_FILES['file'];
 
             $allowedTypes = [
@@ -207,7 +379,7 @@
 
             $urlRelative = 'uploads/soumissions/' . $nomFichier;
 
-            $result = $manager->creerSoumissionFile($_POST['etudiant_id'], $_POST['question_id'], $urlRelative);
+            $result = $manager->creerSoumissionFile($etudiant_id, $_GET['questionId'], $urlRelative);
 
             if($result === false){
                 http_response_code(500);
@@ -219,41 +391,71 @@
             echo json_encode(['url' => $urlRelative]);
 
         } else if(isset($_GET['text'])){
+            if(!isset($_GET['questionId'])){
+                http_response_code(400);
+                echo json_encode(['error' => 'Id manquant']);
+                exit;
+            }
+
             if(!$auth->verifierRole('Etudiant') ){
                 http_response_code(403);
                 echo json_encode(['error' => 'Accès refusé']);
                 exit;
             }
 
-            $data = json_decode(file_get_contents("php://input"), true);
-            if(!isset($data['etudiant_id'])){
-                http_response_code(400);
-                echo json_encode(['error' => 'Id etudiant manquant']);
+            $session = $auth->verifierSession();
+
+            if($session === false){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
                 exit;
-            } else {
-                if(!isset($data['question_id'])){
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Id question manquant']);
-                    exit;
-                } else {
-                    $submit = $manager->creerSoumissionText($data['etudiant_id'], $data['question_id'], $data['soumission']);
+            }
+                            
+            $etudiant_id = $session['utilisateur_id'];
 
-                    if($submit === false){
-                        http_response_code(500);
-                        echo json_encode(['error' => 'Erreur serveur']);
-                        exit;
-                    }
+            $exercice = $manager->getExerciceIdByQuestion($_GET['questionId']);
 
-                    if(is_array($submit) && isset($submit['error'])){
-                        http_response_code(400);
-                        echo json_encode($submit);
-                        exit;
-                    }
+            if($exercice === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
 
-                    http_response_code(200);
-                    echo json_encode($submit);
-                }
-            } 
+            $cours = $manager->getExercice($exercice['exercice_id']);
+
+            if ($cours === false) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $cours_id = $cours['cours_id'];
+
+            if(!$auth->verifierAccesEtudiant($etudiant_id, $cours_id)){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            $submit = $manager->creerSoumissionText($etudiant_id, $_GET['questionId'], $data['soumission']);
+
+            if($submit === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            if(is_array($submit) && isset($submit['error'])){
+                http_response_code(400);
+                echo json_encode($submit);
+                exit;
+            }
+
+            http_response_code(200);
+            echo json_encode($submit);
+            
         } else {
             http_response_code(405);
             echo json_encode(['error' => 'Méthode non autorisée']);
