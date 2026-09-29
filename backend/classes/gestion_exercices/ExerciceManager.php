@@ -81,13 +81,7 @@
                 return false;
             }
 
-            $exercice = new Exercice();
-            $exercice->setExerciceId($row['exercice_id']);
-            $exercice->setLeconId($row['lecon_id']);
-            $exercice->setCoursId($row['cours_id']);
-            $exercice->setTitre($row['exercice_titre']);
-
-            return $exercice;
+            return $row;
         }
         
         public function getExercicesByCours($cours_id){
@@ -420,6 +414,16 @@
                 return true;
             }
             return true;
+        }
+
+        public function getExerciceIdByQuestion($question_id){
+            $row = $this->questionModel->getExerciceIdByQuestion($question_id);
+
+            if(!$row){
+                return false;
+            }
+
+            return $row;
         }
 
         public function getDoneSoumissionsIds($etudiant_id, $exercice_id){
