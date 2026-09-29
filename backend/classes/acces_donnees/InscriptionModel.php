@@ -219,6 +219,29 @@
             return $row !== null;
         }
 
+        public function updateInscription($data){
+            $stmt = mysqli_prepare($this->conn,
+                "UPDATE inscription
+                SET note_finale = ?
+                WHERE etudiant_id = ?
+                AND cours_id = ?"
+            );
+
+            if(!$stmt){
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "dii", $data['note_finale'], $data['etudiant_id'], $data['cours_id']);
+            $execute = mysqli_stmt_execute($stmt);
+
+            if(!$execute){
+                return false;
+            }
+
+            return true;
+        }
+
         public function creerInscription($data){
             if(!$this->etudiantExiste($data['etudiant_id'])) return ['error' => 'Étudiant introuvable'];
             if(!$this->coursExiste($data['cours_id'])) return ['error' => 'Cours introuvable'];
