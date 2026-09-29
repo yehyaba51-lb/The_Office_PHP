@@ -28,7 +28,16 @@
                     exit;
                 }
 
-                $statistics = $manager->getStatistiquesFormateur($_GET['id']);
+                $session = $auth->verifierSession();
+                
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $formateur_id = $session['utilisateur_id'];
+                $statistics = $manager->getStatistiquesFormateur($formateur_id);
 
                 if($statistics === false){
                     http_response_code(500);
@@ -44,8 +53,18 @@
                     echo json_encode(['error' => 'Accès refusé']);
                     exit;
                 }
+
+                $session = $auth->verifierSession();
                 
-                $coursByFormateur = $manager->getCoursByFormateur($_GET['id']);
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $formateur_id = $session['utilisateur_id'];
+                
+                $coursByFormateur = $manager->getCoursByFormateur($formateur_id);
 
                 if($coursByFormateur === false){
                     http_response_code(500);
@@ -62,7 +81,17 @@
                     exit;
                 }
 
-                $coursByEtudiant = $manager->getCoursByEtudiant($_GET['id']);
+                $session = $auth->verifierSession();
+                
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $coursByEtudiant = $manager->getCoursByEtudiant($etudiant_id);
 
                 if($coursByEtudiant === false){
                     http_response_code(500);
@@ -73,9 +102,25 @@
                 http_response_code(200);
                 echo json_encode($coursByEtudiant);
             } else if(isset($_GET['etudiantId'])){
+                $session = $auth->verifierSession();
                 
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
 
-                $coursDetails = $manager->getCoursDetailsByEtudiant($_GET['id'], $_GET['etudiantId']);
+                $verifier = $auth->verifierAccesEtudiant($etudiant_id, $_GET['id']);
+
+                if($verifier === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                
+                $coursDetails = $manager->getCoursDetailsByEtudiant($_GET['id'], $etudiant_id);
 
                 if($coursDetails === false){
                     http_response_code(500);
@@ -126,6 +171,7 @@
             echo json_encode(['error' => 'Accès refusé']);
             exit;
         }
+        
         $data = json_decode(file_get_contents("php://input"), true);
 
         $result = $manager->creerPlaceholder($data['cours_titre'], $data['formateur_id'], $data['categorie_id']);
@@ -152,6 +198,22 @@
         } else {
             if(isset($_GET['description'])){
                 if(!$auth->verifierRole('Formateur')){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $session = $auth->verifierSession();
+                
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $formateur_id  = $session['utilisateur_id'];
+
+                if(!$auth->verifierAccesFormateur($formateur_id , $_GET['id'])){
                     http_response_code(403);
                     echo json_encode(['error' => 'Accès refusé']);
                     exit;
