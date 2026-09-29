@@ -8,6 +8,7 @@
     require_once(__DIR__ .'/../acces_donnees/LeconModel.php');
     require_once(__DIR__ .'/../acces_donnees/ProgressionExerciceModel.php');
     require_once(__DIR__ .'/../acces_donnees/ProgressionLeconModel.php');
+    require_once(__DIR__ .'/../suivi_notes/NoteCalculateur.php');
     require_once('Exercice.php');
     require_once('Question.php');
     require_once('Choix.php');
@@ -23,6 +24,7 @@
         private $leconModel;
         private $progressionExerciceModel;
         private $progressionLeconModel;
+        private $noteCalculateur;
 
         public function __construct()
         {
@@ -36,6 +38,7 @@
             $this->leconModel = new LeconModel($db);
             $this->progressionExerciceModel = new ProgressionExerciceModel($db);
             $this->progressionLeconModel = new ProgressionLeconModel($db);
+            $this->noteCalculateur = new NoteCalculateur($db);
         }
 
 
@@ -499,7 +502,26 @@
                 'commentaire' => $commentaire
             ];
 
-            return $this->soumissionModel->corrigerSoumission($soumission_id, $data);
+            $correction = $this->soumissionModel->corrigerSoumission($soumission_id, $data);
+
+            if($correction === false){
+                return false;
+            }
+
+            $soumission = $this->soumissionModel->getSoumission($soumission_id);
+
+            $exercice = $this->questionModel->getExerciceIdByQuestion($soumission['question_id']);
+
+            $exercice_row = $this->exerciceModel->getExercice($exercice['exercice_id']);
+
+            $calculerMoyenneExercice = $this->noteCalculateur->calculerMoyenneExercice($exercice['exercice_id'], $soumission['etudiant_id']);
+
+            $calculerMoyenneLecon = $this->noteCalculateur->calculerMoyenneLecon($exercice_row['lecon_id'], $exercice_row['cours_id'], $soumission['etudiant_id']);
+            
+            $calculerNoteFinale = $this->noteCalculateur->calculerNoteFinale($soumission['etudiant_id'], $exercice_row['cours_id']);
+
+
+            return true;
         }
 
 
