@@ -42,6 +42,22 @@
                         echo json_encode(['error' => 'Accès refusé']);
                         exit;
                     }
+
+                    $session = $auth->verifierSession();
+
+                    if($session === false){
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $user_id = $session['utilisateur_id'];
+
+                    if(!$auth->verifierAccesFormateur($user_id, $_GET['id'])){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
                     
                     $pdf = $_FILES['pdf'];
                     $pdf_ordre = $_POST['ordre'];
