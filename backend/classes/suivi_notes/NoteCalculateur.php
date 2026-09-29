@@ -4,7 +4,7 @@
     require_once(__DIR__ . '/../acces_donnees/SoumissionModel.php');
     require_once(__DIR__ . '/../acces_donnees/ProgressionExerciceModel.php');
     require_once(__DIR__ . '/../acces_donnees/ProgressionLeconModel.php');
-    require_once(__DIR__ . '/../acces_donnees/ProgressionModel.php');
+    require_once(__DIR__ . '/../acces_donnees/InscriptionModel.php');
     require_once(__DIR__ . '/../acces_donnees/ExerciceModel.php');
     require_once(__DIR__ . '/../acces_donnees/LeconModel.php');
 
@@ -13,7 +13,7 @@
         private $soumissionModel;
         private $progressionExerciceModel;
         private $progressionLeconModel;
-        private $progressionModel;
+        private $inscriptionModel;
         private $exerciceModel;
         private $leconModel;
 
@@ -24,7 +24,7 @@
             $this->soumissionModel = new SoumissionModel($db);
             $this->progressionExerciceModel = new ProgressionExerciceModel($db);
             $this->progressionLeconModel = new ProgressionLeconModel($db);
-            $this->progressionModel = new ProgressionModel($db);
+            $this->inscriptionModel = new InscriptionModel($db);
             $this->exerciceModel = new ExerciceModel($db);
             $this->leconModel = new LeconModel($db);
         }
@@ -59,7 +59,7 @@
                     $sum = $sum + $note;
                 }
 
-                $moy = $sum / count($allNotes);
+                $moy = round($sum / count($allNotes));
 
                 $data = [
                     'note' => $moy,
@@ -113,7 +113,7 @@
                     $sum = $sum + $note;
                 }
 
-                $moy = $sum / count($allNotes);
+                $moy = round($sum / count($allNotes));
 
                 $data = [
                     'note' => $moy,
@@ -169,7 +169,7 @@
                     $sum = $sum + $note;
                 }
 
-                $noteFinale = $sum / count($allNotes);
+                $noteFinale = round($sum / count($allNotes));
 
                 $data = [
                     'note_finale' => $noteFinale,
@@ -177,14 +177,14 @@
                     'cours_id' => $cours_id  
                 ];
 
-                $this->progressionModel->updateProgression($data);
+                $this->inscriptionModel->updateInscription($data);
 
                 return $noteFinale;
             }
         }
 
         public function getNoteFinale($etudiant_id, $cours_id){
-            $row = $this->progressionModel->getProgressionPerEtudiant($etudiant_id, $cours_id);
+            $row = $this->inscriptionModel->getProgressionPerEtudiant($etudiant_id, $cours_id);
 
             if(!$row){
                 return false;
