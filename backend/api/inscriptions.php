@@ -30,7 +30,17 @@
                     exit;
                 }
 
-                $inscriptionPerFormateur = $manager->getInscriptionByFormateur($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $formateur_id = $session['utilisateur_id'];
+
+                $inscriptionPerFormateur = $manager->getInscriptionByFormateur($formateur_id);
 
                 if($inscriptionPerFormateur === false){
                     http_response_code(500);
@@ -47,7 +57,17 @@
                     exit;
                 }
 
-                $newInscriptions = $manager->getNewInscriptions($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $newInscriptions = $manager->getNewInscriptions($etudiant_id);
 
                 if($newInscriptions === false){
                     http_response_code(500);
