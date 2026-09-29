@@ -34,7 +34,17 @@
                     exit;
                 }
 
-                $allExercices = $manager->getExercicesByEtudiant($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $allExercices = $manager->getExercicesByEtudiant($etudiant_id);
                 
                 if($allExercices === false){
                     http_response_code(500);
@@ -46,6 +56,29 @@
                 echo json_encode($allExercices);
             } else {
                 if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                $user_id = $session['utilisateur_id'];
+                $access = false;
+                
+                if($auth->verifierRole('Formateur')){
+                    $access = $auth->verifierAccesFormateur($user_id, $_GET['id']);
+                } else if($auth->verifierRole('Administrateur')){
+                    $access = true;
+                }
+
+                if(!$access){
                     http_response_code(403);
                     echo json_encode(['error' => 'Accès refusé']);
                     exit;
