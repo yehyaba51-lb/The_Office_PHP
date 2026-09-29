@@ -101,8 +101,16 @@
                             echo json_encode(['error' => 'Accès refusé']);
                             exit;
                         }
+
+                        $lecon = $manager->getLecon($_GET['lecon'], $_GET['id']);
     
-                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $user_id);
+                        if(!$lecon){
+                            http_response_code(404);
+                            echo json_encode(['error' => 'Leçon introuvable']);
+                            exit;
+                        }
+    
+                        $allContent = $manager->getAllContent($_GET['id'], $lecon['lecon_id'], $user_id);
     
                         if($allContent === false){
                             http_response_code(500);
