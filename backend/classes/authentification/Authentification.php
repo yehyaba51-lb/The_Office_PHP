@@ -1,13 +1,19 @@
 <?php
     require_once(__DIR__ . '/../acces_donnees/BaseDeDonnee.php');
     require_once(__DIR__ . '/../acces_donnees/UtilisateurModel.php');
+    require_once(__DIR__ . '/../acces_donnees/CoursModel.php');
+    require_once(__DIR__ . '/../acces_donnees/InscriptionModel.php');
     
     class Authentification{
         private $model;
+        private $inscriptionModel;
+        private $coursModel;
 
         public function __construct(){
             $db = new BaseDeDonnee();
             $this->model = new UtilisateurModel($db);
+            $this->inscriptionModel = new InscriptionModel($db);
+            $this->coursModel = new CoursModel($db);
         }
 
 
@@ -74,5 +80,25 @@
             }
 
             return $_SESSION['role'] === $role;
+        }
+
+        public function verifierAccesEtudiant($etudiant_id, $cours_id){
+           $inscrit = $this->inscriptionModel->dejaInscrit($etudiant_id, $cours_id);
+           
+           if($inscrit === false){
+            return false;
+           }
+
+           return true;
+        }
+
+        public function verifierAccesFormateur($formateur_id, $cours_id){
+            $accesGranted = $this->coursModel->verifierAccesFormateur($formateur_id, $cours_id);
+
+            if($accesGranted === false){
+            return false;
+           }
+
+           return true;
         }
     }
