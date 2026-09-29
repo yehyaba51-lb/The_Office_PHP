@@ -34,6 +34,32 @@
                         exit;
                     }
 
+                    $session = $auth->verifierSession();
+                
+                    if($session === false){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+
+                    $user_id = $session['utilisateur_id'];
+                    $role = $session['role'];
+                    $access = false;
+
+                    if($auth->verifierRole('Etudiant')){
+                        $access = $auth->verifierAccesEtudiant($user_id, $_GET['id']);
+                    } else if($auth->verifierRole('Formateur')){
+                        $access = $auth->verifierAccesFormateur($user_id, $_GET['id']);
+                    } else if($auth->verifierRole('Administrateur')){
+                        $access = true;
+                    }
+
+                    if($access === false){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+
                     $lecon = $manager->getLecon($_GET['lecon'],$_GET['id']);
     
                     if($lecon === false){
@@ -45,15 +71,38 @@
                     http_response_code(200);
                     echo json_encode($lecon);
 
-                } else if(isset($_GET['etudiantId'])){
+                } else if(isset($_GET['userId'])){
                     if(isset($_GET['allContent'])){
                         if(!$auth->verifierRole('Formateur') && !$auth->verifierRole('Etudiant')){
                             http_response_code(403);
                             echo json_encode(['error' => 'Accès refusé']);
                             exit;
                         }
+
+                        $session = $auth->verifierSession();
+
+                        if($session === false){
+                            http_response_code(500);
+                            echo json_encode(['error' => 'Erreur serveur']);
+                            exit;
+                        }
+
+                        $user_id = $session['utilisateur_id'];
+                        $verifier = false;
+
+                        if($auth->verifierRole('Etudiant')){
+                            $verifier = $auth->verifierAccesEtudiant($user_id, $_GET['id']);
+                        } else if($auth->verifierRole('Formateur')){
+                            $verifier = $auth->verifierAccesFormateur($user_id, $_GET['id']);
+                        }
+
+                        if($verifier === false){
+                            http_response_code(403);
+                            echo json_encode(['error' => 'Accès refusé']);
+                            exit;
+                        }
     
-                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $_GET['etudiantId']);
+                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $user_id);
     
                         if($allContent === false){
                             http_response_code(500);
@@ -71,6 +120,29 @@
                 }
             } else {
                 if(!$auth->verifierRole('Administrateur') && !$auth->verifierRole('Formateur') ){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                $user_id = $session['utilisateur_id'];
+                $verifier = false;
+
+                if($auth->verifierRole('Formateur')){
+                    $verifier = $auth->verifierAccesFormateur($user_id, $_GET['id']);
+                } else if($auth->verifierRole('Administrateur')){
+                    $verifier = true;
+                }
+
+                if($verifier === false){
                     http_response_code(403);
                     echo json_encode(['error' => 'Accès refusé']);
                     exit;
@@ -95,6 +167,22 @@
             exit;
         } else {
             if(!$auth->verifierRole('Formateur')){
+                http_response_code(403);
+                echo json_encode(['error' => 'Accès refusé']);
+                exit;
+            }
+
+            $session = $auth->verifierSession();
+
+            if($session === false){
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur']);
+                exit;
+            }
+
+            $user_id = $session['utilisateur_id'];
+
+            if(!$auth->verifierAccesFormateur($user_id, $_GET['id'])){
                 http_response_code(403);
                 echo json_encode(['error' => 'Accès refusé']);
                 exit;
