@@ -33,6 +33,31 @@
                         exit;
                     }
 
+                    $session = $auth->verifierSession();
+
+                    if($session === false){
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $user_id = $session['utilisateur_id'];
+                    $cours = $manager->getExercice($_GET['id']);
+
+                    if ($cours === false) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $cours_id = $cours['cours_id'];
+
+                    if(!$auth->verifierAccesFormateur($user_id, $cours_id)){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+
                     $choixExercice = $manager->getChoixByExercice($_GET['id']);
     
                     if($choixExercice === false){
@@ -50,6 +75,31 @@
                         exit;
                     }
 
+                    $session = $auth->verifierSession();
+
+                    if($session === false){
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $user_id = $session['utilisateur_id'];
+                    $cours = $manager->getExercice($_GET['id']);
+
+                    if ($cours === false) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $cours_id = $cours['cours_id'];
+
+                    if(!$auth->verifierAccesEtudiant($user_id, $cours_id)){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+
                     $allQuestionsPerExercice = $manager->getChoixPerExercice($_GET['id']);
 
                     if($allQuestionsPerExercice === false){
@@ -62,6 +112,40 @@
                     echo json_encode($allQuestionsPerExercice);
                 } else {
                     if(!$auth->verifierRole('Formateur')){
+                        http_response_code(403);
+                        echo json_encode(['error' => 'Accès refusé']);
+                        exit;
+                    }
+
+                    $session = $auth->verifierSession();
+
+                    if($session === false){
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $user_id = $session['utilisateur_id'];
+
+                    $exercice = $manager->getExerciceIdByQuestion($_GET['id']);
+
+                    if($exercice === false){
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $cours = $manager->getExercice($exercice['exercice_id']);
+
+                    if ($cours === false) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Erreur serveur']);
+                        exit;
+                    }
+
+                    $cours_id = $cours['cours_id'];
+
+                    if(!$auth->verifierAccesFormateur($user_id, $cours_id)){
                         http_response_code(403);
                         echo json_encode(['error' => 'Accès refusé']);
                         exit;
