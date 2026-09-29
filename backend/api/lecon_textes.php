@@ -36,6 +36,22 @@
                     exit;
                 }
 
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                $user_id = $session['utilisateur_id'];
+
+                if(!$auth->verifierAccesFormateur($user_id, $_GET['id'])){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                
                 $data = json_decode(file_get_contents("php://input"), true);
 
                 if(!isset($data['contenu'])){
