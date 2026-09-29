@@ -32,7 +32,17 @@
                     exit;
                 }
 
-                $getStatistics = $tracker->getStatistiquesEtudiant($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $getStatistics = $tracker->getStatistiquesEtudiant($etudiant_id);
 
                 if($getStatistics === false){
                     http_response_code(500);
@@ -49,7 +59,17 @@
                     exit;
                 }
 
-                $getCoursTermine = $tracker->getCoursTermine($_GET['id']);
+                $session = $auth->verifierSession();
+
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $etudiant_id = $session['utilisateur_id'];
+
+                $getCoursTermine = $tracker->getCoursTermine($etudiant_id);
 
                 if($getCoursTermine === false){
                     http_response_code(500);
@@ -83,8 +103,18 @@
                             echo json_encode(['error' => 'Accès refusé']);
                             exit;
                         }
+
+                        $session = $auth->verifierSession();
+
+                        if($session === false){
+                            http_response_code(403);
+                            echo json_encode(['error' => 'Accès refusé']);
+                            exit;
+                        }
+                            
+                        $etudiant_id = $session['utilisateur_id'];
     
-                        $unlockNextLecon = $tracker->unlockNextLecon($_GET['id'] ,$_GET['leconId'], $_GET['etudiantId']);
+                        $unlockNextLecon = $tracker->unlockNextLecon($_GET['id'] ,$_GET['leconId'], $etudiant_id);
 
                         if($unlockNextLecon === false){
                             http_response_code(500);
