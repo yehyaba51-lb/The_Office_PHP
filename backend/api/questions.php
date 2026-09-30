@@ -35,19 +35,19 @@
 
                 $session = $auth->verifierSession();
 
-                if($session === false){
-                    http_response_code(500);
-                    echo json_encode(['error' => 'Erreur serveur']);
+                if(!$session){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
                     exit;
                 }
 
                 $user_id = $session['utilisateur_id'];
                 $cours = $manager->getExercice($_GET['id']);
 
-                if ($cours === false) {
-                    http_response_code(500);
-                    echo json_encode(['error' => 'Erreur serveur']);
-                    exit;
+                if (!$cours) {
+                    http_response_code(404);
+                        echo json_encode(['error' => 'Aucune question trouvé']);
+                        exit;
                 }
 
                 $cours_id = $cours['cours_id'];
