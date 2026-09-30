@@ -34,7 +34,8 @@
                         cat.categorie_id AS id,
                         cat.categorie_nom,
                         (SELECT COUNT(*) FROM cours AS co WHERE co.categorie_id = cat.categorie_id) AS cours
-                    FROM categorie AS cat";
+                    FROM categorie AS cat
+                    ORDER By cat.categorie_nom";
 
             $result = mysqli_query($this->conn, $query);
 
