@@ -13,6 +13,7 @@
         public function getSoumission($id){
             $stmt = mysqli_prepare($this->conn,
                 "SELECT 
+                    s.soumission_id,
                     c.cours_titre AS cours,
                     e.exercice_titre AS exercice,
                     q.texte_question AS question,
@@ -303,7 +304,7 @@
                 INNER JOIN utilisateur AS u
                 ON u.utilisateur_id = s.etudiant_id
                 WHERE c.formateur_id = ?
-                ORDER By soumis_le DESC"
+                ORDER BY s.soumis_le DESC, s.soumission_id DESC"
             );
 
             if(!$stmt){
@@ -424,7 +425,7 @@
                 INNER JOIN exercice AS e
                 ON q.exercice_id = e.exercice_id
                 WHERE s.etudiant_id = ?
-                ORDER By s.soumis_le DESC"
+                ORDER BY s.soumis_le DESC, s.soumission_id DESC"
             );
 
             if (!$stmt) {
