@@ -107,6 +107,10 @@
             if(in_array(false, $areAllCorrected)){
                 return false;
             } else {
+                if(empty($allNotes)){
+                    return false;
+                }
+
                 $sum = 0;
 
                 foreach ($allNotes as $note) {
@@ -150,19 +154,28 @@
             }
 
             foreach ($lecon_rows as $lecon) {
-                $progression_lecon_row = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon['id']);
+                $lecon_has_exos = $this->exerciceModel->getExercicesByLecon($lecon['id'], $cours_id);
 
-                if($progression_lecon_row && $progression_lecon_row['note'] !== null){
-                    $areAllCorrected[] = true;
-                    $allNotes[] = $progression_lecon_row['note'];
-                } else {
-                    $areAllCorrected[] = false;
+                if($lecon_has_exos){
+                    $progression_lecon_row = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon['id']);
+    
+                    if($progression_lecon_row && $progression_lecon_row['note'] !== null){
+                        $areAllCorrected[] = true;
+                        $allNotes[] = $progression_lecon_row['note'];
+                    } else {
+                        $areAllCorrected[] = false;
+                    }
+
                 }
             }
 
             if(in_array(false, $areAllCorrected)){
                 return false;
             } else {
+                if(empty($allNotes)){
+                    return false;
+                }
+
                 $sum = 0;
 
                 foreach ($allNotes as $note) {
