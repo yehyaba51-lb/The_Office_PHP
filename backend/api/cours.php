@@ -137,6 +137,17 @@
                 http_response_code(200);
                 echo json_encode($coursDetails);
             } else {
+
+                $session = $auth->verifierSession();
+                
+                if($session === false){
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Accès refusé']);
+                    exit;
+                }
+                    
+                $user_id = $session['utilisateur_id'];
+
                 $coursById = $manager->getCours($_GET['id']);
     
                 if($coursById === false){
