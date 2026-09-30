@@ -152,7 +152,7 @@
         }
 
         public function creerChoix($data){
-            if(empty($data['texte_choix']) || strlen(trim($data['texte_choix'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_choix'])){
+            if(empty($data['texte_choix']) || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_choix'])){
                 return ['error' => 'Contenu invalide'];
             }
             
