@@ -108,7 +108,8 @@ class CoursModel
                 LEFT JOIN categorie AS ca
                 ON co.categorie_id = ca.categorie_id
                 LEFT JOIN utilisateur AS u
-                ON co.formateur_id = u.utilisateur_id";
+                ON co.formateur_id = u.utilisateur_id
+                ORDER By co.cours_id DESC";
 
         $result = mysqli_query($this->conn, $query);
 
@@ -140,7 +141,8 @@ class CoursModel
             ON cat.categorie_id = c.categorie_id
             LEFT JOIN utilisateur AS u
             ON u.utilisateur_id = c.formateur_id
-            WHERE formateur_id = ?"
+            WHERE formateur_id = ?
+            ORDER By c.cours_id DESC"
         );
 
         if (!$stmt) {
@@ -182,7 +184,8 @@ class CoursModel
             ON c.formateur_id = u.utilisateur_id
             LEFT JOIN categorie AS cat
             ON c.categorie_id = cat.categorie_id
-            WHERE i.etudiant_id = ?"
+            WHERE i.etudiant_id = ?
+            ORDER By i.inscrit_le DESC"
         );
 
         if (!$stmt) {
