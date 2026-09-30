@@ -81,7 +81,8 @@
                 ON i.cours_id = c.cours_id
                 INNER JOIN utilisateur AS u
                 ON i.etudiant_id = u.utilisateur_id
-                WHERE c.formateur_id = ?"
+                WHERE c.formateur_id = ?
+                ORDER By i.inscrit_le DESC"
             );
 
             if(!$stmt){
@@ -138,7 +139,8 @@
                     INNER JOIN cours AS c
                     ON i.cours_id = c.cours_id
                     INNER JOIN utilisateur AS u
-                    ON i.etudiant_id = u.utilisateur_id";
+                    ON i.etudiant_id = u.utilisateur_id
+                    ORDER By i.inscrit_le DESC";
 
             $result = mysqli_query($this->conn, $query);
 
