@@ -90,6 +90,30 @@
             return mysqli_insert_id($this->conn);
         }
 
+        public function updateProgressionExerciceToAfaire($etudiant_id, $exercice_id){
+            $stmt = mysqli_prepare($this->conn, 
+                "UPDATE progression_exercice
+                SET statut = 'a_faire'
+                WHERE etudiant_id = ?
+                AND exercice_id = ?"
+            );
+
+            if (!$stmt) {
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
+                return false;
+            }
+
+            mysqli_stmt_bind_param($stmt, "ii", $etudiant_id, $exercice_id);
+
+            $execute = mysqli_stmt_execute($stmt);
+
+            if($execute === false){
+                return false;
+            }
+
+            return $execute;
+        }
+
 
         public function updateProgressionExercice($data){
             if(isset($data['note'])){
