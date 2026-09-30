@@ -364,16 +364,33 @@
         }
 
         public function creerSoumissionText($etudiant_id, $question_id, $soumission_reponse){
-            $data = [
-                'etudiant_id' => $etudiant_id,
-                'question_id' => $question_id,
-                'soumission_reponse' => $soumission_reponse
-            ];
+            $soumission = $this->soumissionModel->getSoumissionByEtudiantQuestion($etudiant_id, $question_id);
 
-            $submitted = $this->soumissionModel->creerSoumissionText($data);
+            if($soumission){
+                $data = [
+                    'etudiant_id' => $etudiant_id,
+                    'question_id' => $question_id,
+                    'soumission_reponse' => $soumission_reponse,
+                    'url_fichier' => null
+                ];
+                $submitted = $this->soumissionModel->resoumettre($soumission['soumission_id'], $data);
 
-            if($submitted === false){
-                return false;
+                if($submitted === false){
+                    return false;
+                }
+            } else {
+                $data = [
+                    'etudiant_id' => $etudiant_id,
+                    'question_id' => $question_id,
+                    'soumission_reponse' => $soumission_reponse
+                ];
+    
+                $submitted = $this->soumissionModel->creerSoumissionText($data);
+    
+                if($submitted === false){
+                    return false;
+                }
+
             }
             
             $exercice_row = $this->questionModel->getExerciceIdByQuestion($question_id);
@@ -440,16 +457,32 @@
         }
 
         public function creerSoumissionFile($etudiant_id, $question_id, $soumission_reponse){
-            $data = [
-                'etudiant_id' => $etudiant_id,
-                'question_id' => $question_id,
-                'soumission_reponse' => $soumission_reponse
-            ];
+            $soumission = $this->soumissionModel->getSoumissionByEtudiantQuestion($etudiant_id, $question_id);
 
-            $submitted = $this->soumissionModel->creerSoumissionFile($data);
+            if($soumission){
+                $data = [
+                    'etudiant_id' => $etudiant_id,
+                    'question_id' => $question_id,
+                    'soumission_reponse' => null,
+                    'url_fichier' => $soumission_reponse
+                ];
+                $submitted = $this->soumissionModel->resoumettre($soumission['soumission_id'], $data);
 
-            if($submitted === false){
-                return false;
+                if($submitted === false){
+                    return false;
+                }
+            } else {
+                $data = [
+                    'etudiant_id' => $etudiant_id,
+                    'question_id' => $question_id,
+                    'soumission_reponse' => $soumission_reponse
+                ];
+    
+                $submitted = $this->soumissionModel->creerSoumissionFile($data);
+    
+                if($submitted === false){
+                    return false;
+                }
             }
             
             $exercice_row = $this->questionModel->getExerciceIdByQuestion($question_id);
@@ -516,10 +549,15 @@
 
             $calculerMoyenneExercice = $this->noteCalculateur->calculerMoyenneExercice($exercice['exercice_id'], $soumission['etudiant_id']);
 
-            $calculerMoyenneLecon = $this->noteCalculateur->calculerMoyenneLecon($exercice_row['lecon_id'], $exercice_row['cours_id'], $soumission['etudiant_id']);
+            if($calculerMoyenneExercice !== false){
+                if($calculerMoyenneExercice >= 10){
+                    $calculerMoyenneLecon = $this->noteCalculateur->calculerMoyenneLecon($exercice_row['lecon_id'], $exercice_row['cours_id'], $soumission['etudiant_id']);
+                    $calculerNoteFinale = $this->noteCalculateur->calculerNoteFinale($soumission['etudiant_id'], $exercice_row['cours_id']);
+                } else if($calculerMoyenneExercice < 10){
+                    $updateProgressionExercice = $this->progressionExerciceModel->updateProgressionExerciceToAfaire($soumission['etudiant_id'], $exercice['exercice_id']);
+                }
+            } 
             
-            $calculerNoteFinale = $this->noteCalculateur->calculerNoteFinale($soumission['etudiant_id'], $exercice_row['cours_id']);
-
 
             return true;
         }
