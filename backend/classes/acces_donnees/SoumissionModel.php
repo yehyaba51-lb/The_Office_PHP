@@ -423,7 +423,8 @@
                 ON s.question_id = q.question_id
                 INNER JOIN exercice AS e
                 ON q.exercice_id = e.exercice_id
-                WHERE s.etudiant_id = ?"
+                WHERE s.etudiant_id = ?
+                ORDER By s.soumis_le DESC"
             );
 
             if (!$stmt) {
