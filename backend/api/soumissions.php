@@ -124,9 +124,9 @@
                 
                 $singleSoumission = $manager->getSoumission($_GET['id']);
 
-                if($singleSoumission === false){
-                    http_response_code(500);
-                    echo json_encode(['error' => 'Erreur serveur']);
+                if(!$singleSoumission){
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Aucune soumission trouvé']);
                     exit;
                 }
 
@@ -148,7 +148,7 @@
 
                     $session = $auth->verifierSession();
 
-                    if($session === false){
+                    if(!$session){
                         http_response_code(403);
                         echo json_encode(['error' => 'Accès refusé']);
                         exit;
@@ -158,9 +158,9 @@
 
                     $cours = $manager->getExercice($_GET['exerciceId']);
 
-                    if ($cours === false) {
-                        http_response_code(500);
-                        echo json_encode(['error' => 'Erreur serveur']);
+                    if (!$cours) {
+                        http_response_code(404);
+                        echo json_encode(['error' => 'Aucun cours trouvé']);
                         exit;
                     }
 
