@@ -170,6 +170,7 @@
                 "SELECT
                     s.question_id,
                     s.soumission_reponse,
+                    s.note,
                     s.url_fichier
                 FROM soumission AS s
                 INNER JOIN question AS q
