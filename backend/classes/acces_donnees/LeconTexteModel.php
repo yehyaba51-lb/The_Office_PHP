@@ -93,7 +93,7 @@
 
             $texte_order = $row['max_ordre'] === null ? 1 : $row['max_ordre'] + 1;
 
-            if(empty($data['contenu_texte']) || strlen(trim($data['contenu_texte'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['contenu_texte'])){
+            if(empty($data['contenu_texte']) || strlen(trim($data['contenu_texte'])) < 2){
                 return ['error' => 'Contenu invalide'];
             }
 
