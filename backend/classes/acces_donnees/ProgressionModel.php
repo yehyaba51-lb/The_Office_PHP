@@ -206,7 +206,7 @@
             );
 
             if(!$stmt){
-                error_log('Prepare failed: ' . $this->conn);
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
@@ -229,7 +229,7 @@
             );
 
             if(!$stmt){
-                error_log('Prepare failed: ' . $this->conn);
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
@@ -258,7 +258,7 @@
             );
 
             if(!$stmt){
-                error_log('Prepare failed: ' . $this->conn);
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
@@ -282,7 +282,7 @@
             );
 
             if(!$stmt){
-                error_log('Prepare failed: ' . $this->conn);
+                error_log('Prepare failed: ' . mysqli_error($this->conn));
                 return false;
             }
 
