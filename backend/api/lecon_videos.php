@@ -70,7 +70,7 @@
                         echo json_encode(['error' => "Durée de la vidéo manquante"]);
                         exit;
                     } else {
-                        $valide = $validateur->valider($video, ['video/mp4', 'video/quicktime', 'video/x-m4v'], 500 * 1024 * 1024);
+                        $valide = $validateur->valider($video, ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-m4v'], 500 * 1024 * 1024);
 
 
                         if(is_array($valide) && isset($valide['error'])){
