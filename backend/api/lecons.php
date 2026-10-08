@@ -99,20 +99,24 @@
                             echo json_encode(['error' => 'Accès refusé']);
                             exit;
                         }
-
-                        $lecon = $manager->getLecon($_GET['lecon'], $_GET['id']);
     
-                        if(!$lecon){
-                            http_response_code(404);
-                            echo json_encode(['error' => 'Leçon introuvable']);
-                            exit;
-                        }
-    
-                        $allContent = $manager->getAllContent($_GET['id'], $lecon['lecon_id'], $user_id);
+                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $user_id);
     
                         if($allContent === false){
                             http_response_code(500);
                             echo json_encode(['error' => 'Erreur serveur']);
+                            exit;
+                        }
+
+                        if(is_array($allContent) && isset($allContent['empty'])){
+                            http_response_code(404);
+                            echo json_encode(['error' => 'Leçon introuvable']);
+                            exit;
+                        }
+
+                        if(is_array($allContent) && isset($allContent['error'])){
+                            http_response_code(423);
+                            echo json_encode($allContent);
                             exit;
                         }
     
