@@ -9,6 +9,7 @@
     require_once(__DIR__ .'/../acces_donnees/ProgressionExerciceModel.php');
     require_once(__DIR__ .'/../acces_donnees/ProgressionLeconModel.php');
     require_once(__DIR__ .'/../suivi_notes/NoteCalculateur.php');
+    require_once(__DIR__ . '/../suivi_notes/ProgressionTracker.php');
     require_once('Exercice.php');
     require_once('Question.php');
     require_once('Choix.php');
@@ -25,6 +26,7 @@
         private $progressionExerciceModel;
         private $progressionLeconModel;
         private $noteCalculateur;
+        private $progressionTracker;
 
         public function __construct()
         {
@@ -39,6 +41,7 @@
             $this->progressionExerciceModel = new ProgressionExerciceModel($db);
             $this->progressionLeconModel = new ProgressionLeconModel($db);
             $this->noteCalculateur = new NoteCalculateur($db);
+            $this->progressionTracker = new ProgressionTracker($db);
         }
 
 
@@ -139,13 +142,28 @@
         }
 
         public function getQuestionsByExercice($exercice_id){
-            $rows = $this->questionModel->getQuestionsByExercice($exercice_id);
+            $exercice = $this->questionModel->getQuestionsByExercice($exercice_id);
 
-            if($rows === false){
+            if($exercice === false){
                 return false;
             }
 
-            return $rows;
+            return $exercice;
+        }
+
+        public function getQuestionsByExerciceForEtudiant($exercice_id, $etudiant_id){
+            $exercice = $this->questionModel->getQuestionsByExercice($exercice_id);
+
+            if($exercice === false){
+                return ['empty' => true];
+            }
+
+            $estExerciceDeverrouiller = $this->progressionTracker->estExerciceDeverrouille($etudiant_id, $exercice_id);
+            if(!$estExerciceDeverrouiller){
+                return ['error' => 'Exercice verouiller'];
+            }
+
+            return $exercice;
         }
 
         public function getQuestionsPerLecon($cours_id, $lecon_id){
