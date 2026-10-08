@@ -27,23 +27,14 @@
             $this->leconModel = new LeconModel($db);
         }
 
-        public function estLeconVerrouille($etudiant_id, $cours_id, $lecon_id){
+        public function estLeconDeverrouille($etudiant_id, $cours_id, $lecon_id){
             $row = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon_id);
             
             return $row !== null && $row['statut'] !== null;
         }
 
-        public function estExerciceVerrouille($etudiant_id, $exercice_id){
-            $row = $this->exerciceModel->getExercice($exercice_id);
-
-            if(!$row){
-                return false;
-            } 
-            
-            $lecon_id = $row['lecon_id'];
-            $cours_id = $row['cours_id'];
-
-            $progression_lecon_row = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon_id);
+        public function estExerciceDeverrouille($etudiant_id, $exercice_id){
+            $progression_lecon_row = $this->progressionExerciceModel->getProgressionByExerciceEtudiant($etudiant_id, $exercice_id);
 
             if(!$progression_lecon_row){
                 return false;
