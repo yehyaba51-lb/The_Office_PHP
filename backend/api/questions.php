@@ -56,10 +56,22 @@
                     exit;
                 }
 
-                $allQuestionsPerExercice = $manager->getQuestionsByExercice($_GET['id']);
+                $allQuestionsPerExercice = $manager->getQuestionsByExerciceForEtudiant($_GET['id'], $session['utilisateur_id']);
                 if($allQuestionsPerExercice === false){
                     http_response_code(500);
                     echo json_encode(['error' => 'Erreur serveur']);
+                    exit;
+                }
+
+                if(is_array($allQuestionsPerExercice) && isset($allQuestionsPerExercice['empty'])){
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Leçon introuvable']);
+                    exit;
+                }
+
+                if(is_array($allQuestionsPerExercice) && isset($allQuestionsPerExercice['error'])){
+                    http_response_code(423);
+                    echo json_encode($allQuestionsPerExercice);
                     exit;
                 }
 
