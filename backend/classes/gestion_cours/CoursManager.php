@@ -10,6 +10,7 @@ require_once(__DIR__ . '/../acces_donnees/CategorieModel.php');
 require_once(__DIR__ .'/../acces_donnees/SoumissionModel.php');
 require_once(__DIR__ . '/../acces_donnees/ProgressionModel.php');
 require_once(__DIR__ . '/../acces_donnees/ProgressionLeconModel.php');
+require_once(__DIR__ . '/../suivi_notes/ProgressionTracker.php');
 require_once('Cours.php');
 require_once('Lecon.php');
 require_once('LeconTexte.php');
@@ -31,6 +32,7 @@ class CoursManager
     private $soumissionModel;
     private $progressionModel;
     private $progressionLeconModel;
+    private $progressionTracker;
 
     public function __construct()
     {
@@ -45,6 +47,7 @@ class CoursManager
         $this->soumissionModel = new SoumissionModel($db);
         $this->progressionModel = new ProgressionModel($db);
         $this->progressionLeconModel = new ProgressionLeconModel($db);
+        $this->progressionTracker = new ProgressionTracker($db);
     }
 
     public function creerPlaceholder($cours_titre, $formateur_id, $categorie_id)
@@ -192,6 +195,16 @@ class CoursManager
     }
 
     public function getAllContent($cours_id, $lecon_id, $etudiant_id){
+        $lecon = $this->leconModel->getLecon($lecon_id, $cours_id);
+        if($lecon === false){
+            return ['empty' => true];
+        }
+
+        $estLeconDeverrouiller = $this->progressionTracker->estLeconDeverrouille($etudiant_id, $cours_id, $lecon_id);
+        if(!$estLeconDeverrouiller){
+            return ['error' => 'Leçon verouiller'];
+        }
+
         $videos = $this->leconVideoModel->getLeconVideosByLecon($cours_id, $lecon_id);
         if($videos === false){
             return false;
@@ -207,10 +220,6 @@ class CoursManager
             return false;
         }
 
-        $lecon = $this->leconModel->getLecon($lecon_id, $cours_id);
-        if($lecon === false){
-            return false;
-        }
 
         $lecon_count = $this->leconModel->getLeconsCount($cours_id);
         if($lecon_count === false){
