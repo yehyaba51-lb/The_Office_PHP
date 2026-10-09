@@ -1,5 +1,3 @@
-USE the_office_database;
-
 CREATE TABLE utilisateur(
     utilisateur_id INT PRIMARY KEY AUTO_INCREMENT,
     prenom VARCHAR(50) NOT NULL,
