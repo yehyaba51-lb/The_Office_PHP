@@ -60,9 +60,17 @@
             }
             $categorie_nom = strtolower($data['categorie_nom']);
             mysqli_stmt_bind_param($stmt, "s", $categorie_nom);
-            $execute = mysqli_stmt_execute($stmt);
 
-            if($execute === false){
+            try {
+                $execute = mysqli_stmt_execute($stmt);
+
+                if($execute === false){
+                    return false;
+                }
+            } catch (\mysqli_sql_exception $e) {
+                if($e->getCode() === 1062){
+                    return ['error' => 'Catégorie nom dupliqué'];
+                }
                 return false;
             }
 
