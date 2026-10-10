@@ -178,9 +178,17 @@
             $nom = strtolower($data['nom']);
             $email = strtolower($data['email']);
             mysqli_stmt_bind_param($stmt, 'sssss', $prenom, $nom, $email, $mot_de_passe_hash, $data['role']);
-            $execute = mysqli_stmt_execute($stmt);
             
-            if(!$execute){
+            try {
+                $execute = mysqli_stmt_execute($stmt);
+
+                if($execute === false){
+                    return false;
+                }
+            } catch (\mysqli_sql_exception $e) {
+                if($e->getCode() === 1062){
+                    return ['error' => 'Email dupliqué'];
+                }
                 return false;
             }
 
