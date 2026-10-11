@@ -2,6 +2,12 @@
 
 Backend API for The Office e-learning platform. Plain PHP, no framework — talks to a MariaDB database and serves JSON to the React frontend.
 
+## 🟢 Live demo
+
+The full project is deployed and live at **[theoffice.infinityfreeapp.com](https://theoffice.infinityfreeapp.com)**
+
+This backend is hosted on InfinityFree, with the React build served from the same domain (no separate frontend host — see *Deployment* below for why).
+
 ## Folder structure
 
 Clone this repo directly into `htdocs`. It contains everything the backend needs, plus the `uploads` folder:
@@ -95,8 +101,18 @@ If a subfolder is missing on your machine, the backend recreates it on the next 
 
 ## Connecting the frontend
 
-The React app's `.env` needs `VITE_SERVER_URL` pointing at this backend's `api/` folder and `VITE_UPLOADS_URL` pointing at the the backend's `uploads` folder:
+For local development, the React app's `.env` needs `VITE_SERVER_URL` pointing at this backend's `api/` folder and `VITE_UPLOADS_URL` pointing at the backend's root:
 ```
 VITE_SERVER_URL=http://localhost/The_Office_PHP/backend/api
 VITE_UPLOADS_URL=http://localhost/The_Office_PHP/
 ```
+
+## Deployment
+
+The live site runs backend and frontend from the **same domain** on InfinityFree — PHP serves the API, and the React production build sits alongside it in the same web root. This isn't just convenience: the login system uses PHP sessions, which rely on a cookie the browser only sends back when both sides are treated as the same site. Splitting the frontend onto a different host (Vercel, Netlify) would mean either fighting cross-site cookie settings or adding a proxy — more moving parts for no real benefit here.
+
+A few things that differ from local setup:
+- `backend/.env` holds the live database credentials, created directly on the server — never uploaded from a local copy.
+- `backend/.htaccess` blocks any direct request to files starting with `.env` (covers both `.env` and `.env.example`), so credentials can't be read by visiting the URL directly.
+- `uploads/pdfs`, `uploads/videos`, `uploads/thumbnails`, `uploads/soumissions` are created empty on the server — no local files are uploaded, only the folder structure, since those are meant to fill up from real usage.
+- The React build uses `.env.production` (gitignored) instead of `.env`, pointing at the live backend URL instead of `localhost`.
