@@ -353,8 +353,12 @@
         }
 
         public function corrigerSoumission($id, $data){
-            if($data['note'] !== null && $data['note'] !== '' && (!is_numeric($data['note']) || $data['note'] < 0 || $data['note'] > 20)){
-                return false;
+            if($data['note'] === null || $data['note'] === ''){
+                return ['error' => 'Note non soumise'];
+            }
+
+            if(!is_numeric($data['note']) || $data['note'] < 0 || $data['note'] > 20){
+                return ['error' => 'Note invalide'];
             }
 
             $stmt = mysqli_prepare($this->conn,
