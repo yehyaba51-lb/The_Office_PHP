@@ -69,10 +69,10 @@
             return mysqli_fetch_assoc($result);
         }
 
-        public function creerProgressionExercice($etudiant_id, $exercice_id){
+        public function creerProgressionExercice($data){
             $stmt = mysqli_prepare($this->conn, 
                 "INSERT INTO progression_exercice(etudiant_id, exercice_id, statut)
-                VALUES(?, ?, 'a_faire')"
+                VALUES(?, ?, ?)"
             );
 
             if (!$stmt) {
@@ -80,7 +80,7 @@
                 return false;
             }
 
-            mysqli_stmt_bind_param($stmt, "ii", $etudiant_id, $exercice_id);
+            mysqli_stmt_bind_param($stmt, "iis", $data['etudiant_id'], $data['exercice_id'], $data['statut']);
             $execute = mysqli_stmt_execute($stmt);
 
             if($execute === false){
