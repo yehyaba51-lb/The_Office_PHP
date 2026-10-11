@@ -177,7 +177,7 @@
         }
 
         public function getQuestionsPerExercice($exercice_id){
-            $questionsPerLecon = $this->questionModel->getQuestionsPerExercice($cours_id, $lecon_id);
+            $questionsPerLecon = $this->questionModel->getQuestionsPerExercice($exercice_id);
 
             if($questionsPerLecon === false){
                 return false;
@@ -584,7 +584,7 @@
         public function resoumettre($soumission_id, $nouvelle_reponse, $nouvel_url_fichier){
             $soumission = $this->getSoumission($soumission_id);
 
-            if(!$soumission || $soumission->getNote() === null || $soumission->getNote() >= 10){
+            if(!$soumission || $soumission['note'] === null || $soumission['note'] >= 10){
                 return false;
             }
 
