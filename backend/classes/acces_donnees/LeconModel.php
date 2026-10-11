@@ -124,7 +124,7 @@
         }
 
         public function creerLecon($data){
-            if(empty($data['lecon_titre']) || strlen(trim($data['lecon_titre'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['lecon_titre'])){
+            if(empty($data['lecon_titre']) || strlen(trim($data['lecon_titre'])) < 2 || !preg_match("/^[a-zA-ZÀ-ÿ0-9'.,;!?() :\"\-]+$/", $data['lecon_titre'])){
                 return ['error' => 'Titre invalide'];
             }
 
