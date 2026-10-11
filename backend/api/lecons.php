@@ -100,7 +100,7 @@
                             exit;
                         }
     
-                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $user_id);
+                        $allContent = $manager->getAllContent($_GET['id'], $_GET['lecon'], $user_id, $session['role']);
     
                         if($allContent === false){
                             http_response_code(500);
