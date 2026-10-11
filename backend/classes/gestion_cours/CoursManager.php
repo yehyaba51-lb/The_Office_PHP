@@ -194,16 +194,19 @@ class CoursManager
         ];
     }
 
-    public function getAllContent($cours_id, $lecon_id, $etudiant_id){
+    public function getAllContent($cours_id, $lecon_id, $etudiant_id, $role){
         $lecon = $this->leconModel->getLecon($lecon_id, $cours_id);
         if($lecon === false){
             return ['empty' => true];
         }
 
-        $estLeconDeverrouiller = $this->progressionTracker->estLeconDeverrouille($etudiant_id, $cours_id, $lecon_id);
-        if(!$estLeconDeverrouiller){
-            return ['error' => 'Leçon verouiller'];
+        if($role === 'Etudiant'){
+            $estLeconDeverrouiller = $this->progressionTracker->estLeconDeverrouille($etudiant_id, $cours_id, $lecon_id);
+            if(!$estLeconDeverrouiller){
+                return ['error' => 'Leçon verouiller'];
+            }
         }
+
 
         $videos = $this->leconVideoModel->getLeconVideosByLecon($cours_id, $lecon_id);
         if($videos === false){
@@ -220,15 +223,17 @@ class CoursManager
             return false;
         }
 
-
         $lecon_count = $this->leconModel->getLeconsCount($cours_id);
         if($lecon_count === false){
             return false;
         }
 
-        $progression_lecon = $this->progressionLeconModel->getProgressionLecon($cours_id, $lecon_id, $etudiant_id);
-        if($progression_lecon === false){
-            return false;
+        $progression_lecon = [];
+        if($role === 'Etudiant'){
+            $progression_lecon = $this->progressionLeconModel->getProgressionLecon($cours_id, $lecon_id, $etudiant_id);
+            if($progression_lecon === false){
+                return false;
+            }
         }
 
         $allContent = [
