@@ -44,6 +44,14 @@
         }
 
         public function unlockNextLecon($cours_id, $lecon_id, $etudiant_id){
+            $progression_lecon = $this->progressionLeconModel->getProgressionByLeconEtudiant($etudiant_id, $cours_id, $lecon_id);
+
+            if(!$progression_lecon){
+                return ['error' => 'Progression introuvable pour cette leçon'];
+            } else if($progression_lecon['statut'] === 'terminee'){
+                return ['error' => 'Leçon déjà terminée'];
+            }
+
             $updateProgression = $this->progressionModel->updateDerniereLeconId($cours_id, $lecon_id, $etudiant_id);
 
             if($updateProgression === false){
@@ -62,8 +70,15 @@
                 return ['error' => 'Pas pu recuperer exercice'];
             }
 
+            
             foreach ($exercices as $exercice){
-                $creerProgressionExercice = $this->progressionExerciceModel->creerProgressionExercice($etudiant_id, $exercice['exercice_id']);
+                $data = [
+                    'etudiant_id' => $etudiant_id,
+                    'exercice_id' => $exercice['exercice_id'],
+                    'statut' => 'a_faire'
+                ];
+
+                $creerProgressionExercice = $this->progressionExerciceModel->creerProgressionExercice($data);
 
                 if($creerProgressionExercice === false){
                     return ['error' => 'Pas pu recuperer exercice'];
@@ -124,17 +139,13 @@
                         $data = [
                             'etudiant_id' => $etudiant_id,
                             'exercice_id' => $exercice['exercice_id'],
-                            'statut' => 'a_faire',
-                            'complete_le' => null,
-                            'note' => null
+                            'statut' => 'a_faire'
                         ];
                     } else {
                         $data = [
                             'etudiant_id' => $etudiant_id,
                             'exercice_id' => $exercice['exercice_id'],
-                            'statut' => null,
-                            'complete_le' => null,
-                            'note' => null
+                            'statut' => null
                         ];
                     }
                     $this->progressionExerciceModel->creerProgressionExercice($data);
