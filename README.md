@@ -116,3 +116,4 @@ A few things that differ from local setup:
 - `backend/.htaccess` blocks any direct request to files starting with `.env` (covers both `.env` and `.env.example`), so credentials can't be read by visiting the URL directly.
 - `uploads/pdfs`, `uploads/videos`, `uploads/thumbnails`, `uploads/soumissions` are created empty on the server, no local files are uploaded, only the folder structure, since those are meant to fill up from real usage.
 - The React build uses `.env.production` (gitignored) instead of `.env`, pointing at the live backend URL instead of `localhost`.
+- Video uploads are capped at 20MB. InfinityFree's own server enforces a 20M/30M PHP limit (`upload_max_filesize`/`post_max_size`) that can't be raised on the free tier.
