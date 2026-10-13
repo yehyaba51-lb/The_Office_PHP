@@ -152,8 +152,12 @@
         }
 
         public function creerChoix($data){
-            if(empty($data['texte_choix']) || !preg_match("/^[a-zA-ZÀ-ÿ0-9' :\-]*$/u", $data['texte_choix'])){
-                return ['error' => 'Contenu invalide'];
+            if(empty($data['texte_choix'])){
+                return ['error' => 'Le texte du choix est vide'];
+            }
+
+            if(!preg_match("/^[a-zA-ZÀ-ÿ0-9'’“”«» :;.,!?()+=#*\"\-]*$/u", $data['texte_choix'])){
+                return ['error' => 'Choix contient des caractères non autorisés'];
             }
             
             $stmt = mysqli_prepare($this->conn, "INSERT INTO choix(question_id, texte_choix, est_correct, ordre) VALUES(?, ?, ?, ?)");
